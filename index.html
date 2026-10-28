@@ -586,7 +586,7 @@ function harbor() {
 }
 const SCENARIOS = [
   { id: 'today', label: 'Today: mid-campaign', desc: 'Missing caption, approval outstanding, INS suggestion waiting' },
-  { id: 'checking', label: 'All approved, with INS', desc: 'Nothing for the client to do' },
+  { id: 'checking', label: 'All approved, INS publishes', desc: 'Nothing for the client to do' },
   { id: 'ready', label: 'Ready to launch', desc: 'INS has confirmed the time' },
   { id: 'newphoto', label: 'New photo after approval', desc: 'Approvals replaced, launch waits' },
   { id: 'live', label: 'Published', desc: 'All three languages online' },
@@ -651,7 +651,7 @@ function langState(c, code) {
   if (!ca) return s.ins ? { key: 'proposal', label: 'INS suggested changes', tone: 'act', icon: 'ins', owner: 'approvers' }
                         : { key: 'awaiting', label: 'Waiting for approval', tone: 'act', icon: 'clock', owner: 'approvers' };
   // INS's own check (ln.review) is internal: the client sees one state once a version is approved.
-  return { key: ln.review === ca.v ? 'ready' : 'checking', label: 'Approved · with INS', tone: 'ok', icon: 'check', owner: 'ins', dirty };
+  return { key: ln.review === ca.v ? 'ready' : 'checking', label: 'Approved · INS publishes', tone: 'ok', icon: 'check', owner: 'ins', dirty };
 }
 function campaignState(c) {
   const st = c.langs.map(code => langState(c, code));
@@ -682,7 +682,8 @@ function allTasks() {
         else if (st.key === 'outdated') { title = `Update the ${L(code)} translation`; why = `English changed in version ${sourceApprovedV(c)}. This translation was made from version ${ln.text.basedOn}, so it can’t be published until it’s updated.`; act = 'Update'; }
         else { title = s ? `Send your ${L(code)} changes for approval` : `Send ${L(code)} for approval`; why = 'The material is complete. An approver can approve it once it’s sent.'; act = 'Review and send'; }
         const prep = c.preparer || 'jonas', mineToDo = canEdit() && (S.role === 'contributor' || S.role === 'admin' || prep === me());
-        (mineToDo ? mine : colleagues).push({ ...ctx, title, why, act, view: 'lang', who: `${PEOPLE[prep].name} (prepares the material)`, icon: st.key === 'unsent' ? 'pen' : 'alert', tone: st.tone, focus: st.key === 'missing' && st.miss[0].kind === 'caption' ? `cap-${st.miss[0].id}-${code}` : null });
+        const whyAll = why + (S.role === 'admin' && prep !== me() ? ` ${PEOPLE[prep].name} usually prepares this. You can do it yourself, or ask them.` : '');
+        (mineToDo ? mine : colleagues).push({ ...ctx, title, why: whyAll, act, view: 'lang', who: `${PEOPLE[prep].name} (prepares the material)`, icon: st.key === 'unsent' ? 'pen' : 'alert', tone: st.tone, focus: st.key === 'missing' && st.miss[0].kind === 'caption' ? `cap-${st.miss[0].id}-${code}` : null });
       } else if (st.owner === 'approvers') {
         const t = st.key === 'proposal' ? { title: `Decide on INS’s suggested changes to ${L(code)}`, why: `Anna Virtanen at INS suggested new wording. It’s only used if an approver approves it, and ${L(code)} can’t launch until someone decides.`, act: 'See the changes' }
                                         : { title: `Approve ${L(code)} · version ${s.v}`, why: `Sent by ${PEOPLE[s.by].name} ${day(s.at)}.` + (sourcePending(c, code) ? ' Decide on English first: it has new wording waiting, and this translation may need updating.' : ''), act: 'Review and approve' };
@@ -879,7 +880,7 @@ function viewLang(c, code) {
   }
   else if (st.key === 'unsent') banner = `<div class="banner act"><strong>${s ? `You have changes that aren’t sent yet.` : 'Everything INS needs is here.'}</strong><p>${s ? `Version ${s.v} is ${st.key === 'unsent' && !ca ? 'what approvers see now' : 'still the approved one'}. Sending creates version ${s.v + 1}.` : 'Send it so an approver can approve it.'}</p>${canEdit() ? `<div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div>` : ''}</div>`;
   else if (st.key === 'proposal' || st.key === 'awaiting') banner = `<div class="banner act"><strong>${st.key === 'proposal' ? `INS suggested changes (version ${s.v}).` : `Version ${s.v} is waiting for your company’s approval.`}</strong><p>${canApprove() ? 'You’re an approver, so you can approve it.' : `Waiting for ${approversText(true)}.`} INS doesn’t approve your material: it publishes it once your approver has approved it.</p><div><button class="btn primary" data-act="go" data-view="review" data-cid="${c.id}" data-code="${code}" data-v="${s.v}">${canApprove() ? (st.key === 'proposal' ? 'See the changes and decide' : 'Review and approve') : 'See what they’ll approve'}</button></div></div>`;
-  else if (st.key === 'checking' || st.key === 'ready') banner = `<div class="banner ok"><strong>Version ${ca.v} is approved and with INS.</strong><p>${st.dirty ? `You have newer changes that aren’t sent. They are <em>not</em> part of the approval. ` : ''}${ln.live ? `Version ${ln.live.v} is online; INS publishes version ${ca.v} as an update.` : c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}.` : 'INS will confirm the launch time.'}</p>${st.dirty && canEdit() ? `<div><button class="btn" data-act="send" data-cid="${c.id}" data-code="${code}">Send the changes for approval</button></div>` : ''}</div>`;
+  else if (st.key === 'checking' || st.key === 'ready') banner = `<div class="banner ok"><strong>Version ${ca.v} is approved. Nothing more is needed from you.</strong><p>INS doesn’t approve your material; it publishes it. ${st.dirty ? `You have newer changes that aren’t sent. They are <em>not</em> part of the approval. ` : ''}${ln.live ? `Version ${ln.live.v} is online; INS publishes version ${ca.v} as an update.` : c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}.` : 'INS will confirm the launch time.'}</p>${st.dirty && canEdit() ? `<div><button class="btn" data-act="send" data-cid="${c.id}" data-code="${code}">Send the changes for approval</button></div>` : ''}</div>`;
   else if (st.key === 'live') banner = `<div class="banner ok"><strong>Version ${ln.live.v} has been online since ${esc(when(ln.live.at))}.</strong><p>You can still make changes. They go through approval and INS publishes them as an update; until then the current version stays online.</p></div>`;
 
   const textPart = editing ? textForm(c, code) : ln.text ? `<div class="article">${textBlock(ln.text)}<p class="small muted">${isTr ? `Translated from English version ${ln.text.basedOn ?? '–'} · ` : ''}${s && !unsent(c, code) ? `Same as version ${s.v}` : 'Saved draft'}</p>${canEdit() && !(isTr && outdated(c, code)) ? `<div><button class="btn" data-act="edit" data-cid="${c.id}" data-code="${code}">${I.pen.replace('<svg', '<svg width="16" height="16"')} Edit text</button></div>` : ''}</div>`
@@ -1170,7 +1171,7 @@ const ACT = {
     logAdd(c, a.at, PEOPLE[me()].name, `Approved ${L(code)} version ${s.v}${s.ins ? ' (INS suggestion)' : ''} · fingerprint ${s.fp}`);
     const affected = code === c.source ? c.langs.filter(k => k !== code && outdated(c, k)) : [];
     S.dialog = { title: `Approved: ${L(code)} · version ${s.v}`, html: `<p>Recorded ${esc(longWhen(a.at))} by ${esc(PEOPLE[me()].name)}.<br><span class="fp">Fingerprint ${s.fp}</span></p>
-      <p><strong>Next:</strong> this version is now with INS. ${c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}` : 'INS will confirm the launch time'}.${c.mode === 'together' && c.langs.length > 1 ? ' All languages launch together.' : ''}</p>
+      <p><strong>Next:</strong> nothing more is needed from your company. INS doesn’t approve your material; it publishes it. ${c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}` : 'INS will confirm the launch time'}.${c.mode === 'together' && c.langs.length > 1 ? ' All languages launch together.' : ''}</p>
       ${affected.length ? `<div class="banner warn"><strong>${affected.map(L).join(' and ')} now need${affected.length > 1 ? '' : 's'} updating.</strong><p>They were translated from an older English version. Your team will see this as a to-do.</p></div>` : ''}
       <p class="small muted">Changed your mind? You can withdraw the approval on the ${esc(L(code))} page.</p>`,
       actions: [{ label: 'Back to the campaign', act: 'close-go', kind: 'primary', data: { cid: c.id } }] };
