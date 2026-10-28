@@ -1390,7 +1390,7 @@ const ANSWERS_TO = "axel.idstrom@ins.fi";
   if (!showControls()) S.panel = false;
   render();
 })();
-const TKEY = 'ins-portal-selftest';
+const TKEY = 'ins-portal-clienttest';
 const saveLocal = () => { try { localStorage.setItem(TKEY, JSON.stringify(TST)); } catch (e) {} };
 const loadLocal = () => { try { const x = JSON.parse(localStorage.getItem(TKEY) || 'null'); return x && x.active ? x : null; } catch (e) { return null; } };
 
@@ -1427,7 +1427,7 @@ function logTestEvent(el) {
   TST.cur.events.push({ t: Math.round((Date.now() - TST.cur.t0) / 1000), act: el.dataset.act, view: S.view.name,
     code: S.view.code || '', label: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 50) });
 }
-const SKEY = 'ins-portal-selftest-state';
+const SKEY = 'ins-portal-clienttest-state';
 const ISO = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z$/;
 const loadState = i => { try { const x = JSON.parse(localStorage.getItem(SKEY) || 'null', (k, v) => typeof v === 'string' && ISO.test(v) ? new Date(v) : v); return x && x.idx === i ? x.S : null; } catch (e) { return null; } };
 const renderPortal = render;
@@ -1507,7 +1507,7 @@ function resultText() {
   const lines = [`INS portal user test — ${TST.name || 'participant'} — ${TST.startedAt}`, `Device: ${TST.device}`, ''];
   TST.tasks.forEach((r, i) => {
     lines.push(`Task ${i + 1}: ${r.outcome.toUpperCase()} in ${r.seconds}s · ease ${r.ease ?? '-'}/5`);
-    TEST_TASKS[i].questions.forEach((q, k) => lines.push(`  ${q}\n    ${r.answers['q' + k] || '-'}`));
+    (TEST_TASKS[i]?.questions || []).forEach((q, k) => lines.push(`  ${q}\n    ${r.answers['q' + k] || '-'}`));
     if (r.confusing) lines.push(`  Confusing: ${r.confusing}`);
     lines.push(`  Ended on: ${r.snapshot.view}${r.snapshot.code ? ' ' + r.snapshot.code : ''} · ${Object.entries(r.snapshot.langs).map(([k, v]) => k + ' ' + v.state).join(', ')}`);
     lines.push(`  Clicks: ${r.events.map(e => e.label || e.act).join(' › ')}`, '');
