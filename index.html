@@ -1,0 +1,1562 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>INS Client Portal User Test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: a calm single column per campaign — next step, launch line, readiness grid, material, record.
+   Tokens follow brand-harmony (INS crimson, paper and ink); status colours always come with a word and an icon. */
+:root {
+  --paper: oklch(0.985 0.004 80);
+  --paper-deep: oklch(0.96 0.007 80);
+  --surface: oklch(0.997 0.002 80);
+  --ink: oklch(0.2 0.01 50);
+  --ink-soft: oklch(0.38 0.01 50);
+  --ink-mute: oklch(0.48 0.01 55);
+  --rule: oklch(0.88 0.006 70);
+  --rule-strong: oklch(0.78 0.008 60);
+  --accent: oklch(0.494 0.188 22);
+  --accent-hover: oklch(0.42 0.16 22);
+  --accent-tint: oklch(0.955 0.02 22);
+  --on-accent: oklch(0.99 0 0);
+  --ok: oklch(0.47 0.09 155);
+  --ok-tint: oklch(0.95 0.03 155);
+  --warn: oklch(0.5 0.11 65);
+  --warn-tint: oklch(0.96 0.04 80);
+  --info: oklch(0.46 0.09 250);
+  --info-tint: oklch(0.95 0.02 250);
+  --sim: oklch(0.45 0.13 295);
+  --sim-tint: oklch(0.96 0.025 295);
+  --ins-del: oklch(0.93 0.04 22);
+  --ins-add: oklch(0.92 0.05 155);
+  --shadow: 0 8px 24px -8px oklch(0.2 0.01 50 / 0.18), 0 1px 2px oklch(0.2 0.01 50 / 0.08);
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --r: 3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: oklch(0.18 0.008 50); --paper-deep: oklch(0.215 0.008 50); --surface: oklch(0.225 0.009 50);
+    --ink: oklch(0.95 0.005 80); --ink-soft: oklch(0.82 0.006 70); --ink-mute: oklch(0.7 0.008 70);
+    --rule: oklch(0.32 0.008 50); --rule-strong: oklch(0.42 0.01 50);
+    --accent: oklch(0.66 0.16 24); --accent-hover: oklch(0.72 0.14 24); --accent-tint: oklch(0.27 0.05 22); --on-accent: oklch(0.16 0.01 50);
+    --ok: oklch(0.76 0.11 155); --ok-tint: oklch(0.27 0.04 155);
+    --warn: oklch(0.8 0.12 75); --warn-tint: oklch(0.28 0.045 75);
+    --info: oklch(0.76 0.08 250); --info-tint: oklch(0.27 0.035 250);
+    --sim: oklch(0.78 0.11 295); --sim-tint: oklch(0.27 0.045 295);
+    --ins-del: oklch(0.34 0.07 22); --ins-add: oklch(0.34 0.07 155);
+    --shadow: 0 8px 24px -8px oklch(0 0 0 / 0.6), 0 1px 2px oklch(0 0 0 / 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: oklch(0.18 0.008 50); --paper-deep: oklch(0.215 0.008 50); --surface: oklch(0.225 0.009 50);
+  --ink: oklch(0.95 0.005 80); --ink-soft: oklch(0.82 0.006 70); --ink-mute: oklch(0.7 0.008 70);
+  --rule: oklch(0.32 0.008 50); --rule-strong: oklch(0.42 0.01 50);
+  --accent: oklch(0.66 0.16 24); --accent-hover: oklch(0.72 0.14 24); --accent-tint: oklch(0.27 0.05 22); --on-accent: oklch(0.16 0.01 50);
+  --ok: oklch(0.76 0.11 155); --ok-tint: oklch(0.27 0.04 155);
+  --warn: oklch(0.8 0.12 75); --warn-tint: oklch(0.28 0.045 75);
+  --info: oklch(0.76 0.08 250); --info-tint: oklch(0.27 0.035 250);
+  --sim: oklch(0.78 0.11 295); --sim-tint: oklch(0.27 0.045 295);
+  --ins-del: oklch(0.34 0.07 22); --ins-add: oklch(0.34 0.07 155);
+  --shadow: 0 8px 24px -8px oklch(0 0 0 / 0.6), 0 1px 2px oklch(0 0 0 / 0.4);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.25rem); }
+h2 { font-size: 1.375rem; }
+h3 { font-size: 1.125rem; }
+p { margin: 0; }
+a { color: inherit; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.eyebrow { font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; font-weight: 600; color: var(--ink-mute); }
+.muted { color: var(--ink-mute); }
+.small { font-size: 0.9rem; }
+.tnum { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 72rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.stack-lg { display: flex; flex-direction: column; gap: 2.5rem; }
+.row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Top bar */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--rule); }
+.top .wrap { display: flex; align-items: center; gap: 1.5rem; min-height: 64px; flex-wrap: wrap; padding-block: 0.4rem; }
+.logo { display: flex; align-items: baseline; gap: 0.6rem; text-decoration: none; background: none; border: 0; padding: 0; cursor: pointer; }
+.logo b { font-family: var(--serif); font-size: 1.5rem; color: var(--accent); letter-spacing: -0.02em; }
+.logo span { font-size: 0.9rem; color: var(--ink-soft); }
+.nav { display: flex; gap: 0.25rem; }
+.nav button { background: none; border: 0; padding: 0.6rem 0.8rem; min-height: 44px; border-radius: var(--r); cursor: pointer; color: var(--ink-soft); font-weight: 500; }
+.nav button[aria-current="page"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); }
+.nav button:hover { color: var(--ink); background: var(--paper-deep); }
+.who { margin-left: auto; text-align: right; font-size: 0.9rem; line-height: 1.3; }
+.who strong { display: block; font-weight: 600; }
+.who label { display: block; }
+.as-role { min-height: 40px; width: auto; max-width: 100%; padding: 0.3rem 0.5rem; font-weight: 600; font-size: 0.9rem; }
+.badge-count { display: inline-grid; place-items: center; min-width: 1.4rem; height: 1.4rem; padding: 0 0.35rem; border-radius: 1rem; background: var(--accent); color: var(--on-accent); font-size: 0.75rem; font-weight: 600; margin-left: 0.3rem; }
+
+main { padding-block: 2rem 8rem; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; padding: 0.55rem 1.1rem; border-radius: var(--r); border: 1px solid var(--ink); background: transparent; cursor: pointer; font-weight: 500; text-align: center; transition: background 120ms cubic-bezier(.2,0,0,1), color 120ms; }
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.quiet { border-color: transparent; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; padding-inline: 0.5rem; }
+.btn.quiet:hover { background: var(--paper-deep); color: var(--ink); }
+.btn.danger { border-color: var(--accent); color: var(--accent); }
+.btn.danger:hover { background: var(--accent); color: var(--on-accent); }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn[disabled]:hover { background: transparent; color: inherit; }
+.btn.primary[disabled]:hover { background: var(--accent); color: var(--on-accent); }
+.link { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; }
+.back { align-self: flex-start; text-align: left; background: none; border: 0; padding: 0.4rem 0; min-height: 44px; cursor: pointer; color: var(--ink-soft); }
+.back:hover { color: var(--ink); text-decoration: underline; }
+
+/* Status pills */
+.pill { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; padding: 0.15rem 0.55rem 0.15rem 0.45rem; border-radius: 1rem; white-space: nowrap; }
+.pill svg { width: 15px; height: 15px; flex: none; }
+.t-ok { color: var(--ok); background: var(--ok-tint); }
+.t-warn { color: var(--warn); background: var(--warn-tint); }
+.t-info { color: var(--info); background: var(--info-tint); }
+.t-mute { color: var(--ink-soft); background: var(--paper-deep); }
+.t-act { color: var(--accent); background: var(--accent-tint); }
+.state { display: inline-flex; align-items: flex-start; gap: 0.4rem; font-weight: 500; }
+.state svg { width: 17px; height: 17px; margin-top: 0.2rem; flex: none; }
+.c-ok { color: var(--ok); } .c-warn { color: var(--warn); } .c-info { color: var(--info); } .c-mute { color: var(--ink-mute); } .c-act { color: var(--accent); }
+
+/* Prototype markers */
+.tag { display: inline-block; font-family: var(--mono); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.02em; padding: 0.05rem 0.4rem; border: 1px dashed var(--sim); color: var(--sim); border-radius: 2px; vertical-align: middle; white-space: nowrap; background: var(--sim-tint); }
+.tag.rule { border-style: solid; }
+body.no-markers .tag { display: none; }
+
+/* Panels */
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 1.25rem; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.next { border: 1px solid var(--rule); border-left: 4px solid var(--accent); background: var(--surface); border-radius: var(--r); padding: 1.25rem 1.4rem; display: grid; gap: 0.9rem; }
+.next.calm { border-left-color: var(--info); }
+.next.done { border-left-color: var(--ok); }
+.next h2 { font-size: 1.3rem; }
+
+/* Task list */
+.tasks { display: grid; gap: 0.6rem; }
+.task { display: grid; grid-template-columns: auto 1fr auto; gap: 0.9rem; align-items: center; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); }
+.task .ico { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
+.task .ico svg { width: 18px; height: 18px; }
+.task-title { font-weight: 600; }
+.task-meta { font-size: 0.9rem; color: var(--ink-mute); }
+.wait { display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--rule); }
+.wait li { list-style: none; display: grid; grid-template-columns: minmax(10rem, 14rem) 1fr; gap: 0.25rem 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--rule); }
+.wait li .who-w { font-weight: 600; }
+.wait ul, ul.wait { margin: 0; padding: 0; }
+.empty { padding: 1rem 1.1rem; border: 1px dashed var(--rule-strong); border-radius: var(--r); color: var(--ink-soft); }
+
+/* Campaign cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); gap: 1rem; }
+.ccard { text-align: left; display: grid; gap: 0.75rem; padding: 1.25rem; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); cursor: pointer; }
+.ccard:hover { border-color: var(--ink-soft); }
+.ccard, .ccard > * { min-width: 0; }
+.ccard .pill { white-space: normal; }
+.ccard-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; line-height: 1.25; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+/* Launch line */
+.launch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule); border-radius: var(--r); background: var(--surface); }
+.launch > div { padding: 1rem 1.15rem; display: grid; gap: 0.25rem; align-content: start; }
+.launch > div + div { border-left: 1px solid var(--rule); }
+.launch .when { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+.launch .when.none { font-family: var(--sans); font-size: 1rem; font-weight: 500; color: var(--ink-mute); }
+.launch-note { font-size: 0.92rem; color: var(--ink-soft); margin-top: 0.6rem; }
+
+/* Steps */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: s; margin: 0; padding: 0; }
+.steps li { list-style: none; padding: 0.6rem 0.8rem 0.6rem 0; font-size: 0.9rem; color: var(--ink-mute); border-top: 3px solid var(--rule); }
+.steps li b { display: block; color: var(--ink-soft); font-weight: 600; }
+.steps li.done { border-top-color: var(--ok); }
+.steps li.now { border-top-color: var(--accent); color: var(--ink-soft); }
+.steps li.now b { color: var(--ink); }
+
+/* Readiness grid */
+.grid-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--r); background: var(--surface); }
+table.ready { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+table.ready th { text-align: left; font-size: 0.75rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; padding: 0.75rem 1rem; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+table.ready td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table.ready tr:last-child td { border-bottom: 0; }
+table.ready .lang { font-weight: 600; }
+table.ready .lang small { display: block; font-weight: 400; color: var(--ink-mute); }
+.cell-sub { display: block; font-size: 0.85rem; color: var(--ink-mute); margin-left: 1.45rem; }
+
+/* Language page */
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem); gap: 2rem; align-items: start; }
+.article { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 1.5rem 1.6rem; display: grid; gap: 0.9rem; }
+.article .hl { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; line-height: 1.25; }
+.article .bd { font-family: var(--serif); font-size: 1.08rem; line-height: 1.65; max-width: 42rem; display: grid; gap: 0.8rem; }
+.article.readonly { background: var(--paper); }
+del { background: var(--ins-del); text-decoration: line-through; text-decoration-color: var(--accent); color: var(--ink-soft); }
+ins { background: var(--ins-add); text-decoration: none; border-bottom: 2px solid var(--ok); }
+.figure { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 1rem; align-items: start; padding: 0.9rem 0; border-top: 1px solid var(--rule); }
+.figure:first-child { border-top: 0; padding-top: 0; }
+.thumb { width: 100%; max-width: 100%; aspect-ratio: 16 / 10; border-radius: 2px; overflow: hidden; background: var(--paper-deep); display: block; }
+.thumb svg { width: 100%; height: 100%; display: block; }
+.caption { font-size: 0.95rem; color: var(--ink-soft); }
+.vlist { margin: 0; padding: 0; display: grid; }
+.vlist li { list-style: none; display: grid; grid-template-columns: auto 1fr auto; gap: 0.75rem; align-items: center; padding: 0.7rem 0; border-top: 1px solid var(--rule); }
+.vnum { font-family: var(--mono); font-size: 0.85rem; padding: 0.1rem 0.45rem; border: 1px solid var(--rule-strong); border-radius: 2px; }
+.banner { padding: 1rem 1.15rem; border-radius: var(--r); display: grid; gap: 0.5rem; }
+.banner.warn { background: var(--warn-tint); }
+.banner.info { background: var(--info-tint); }
+.banner.ok { background: var(--ok-tint); }
+.banner.act { background: var(--accent-tint); }
+
+/* Forms */
+label { font-weight: 600; font-size: 0.95rem; }
+.field { display: grid; gap: 0.35rem; }
+.hint { font-size: 0.88rem; color: var(--ink-mute); font-weight: 400; }
+input[type=text], input[type=datetime-local], input[type=date], input[type=time], textarea, select { width: 100%; min-height: 44px; padding: 0.55rem 0.7rem; border: 1px solid var(--rule-strong); border-radius: var(--r); background: var(--surface); }
+textarea { min-height: 12rem; line-height: 1.55; resize: vertical; font-family: var(--serif); font-size: 1.02rem; }
+.choice { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.8rem 0.9rem; border: 1px solid var(--rule); border-radius: var(--r); cursor: pointer; background: var(--surface); }
+.choice:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.choice input { margin-top: 0.35rem; width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+.choice span { display: grid; gap: 0.15rem; font-weight: 400; }
+.choice strong { font-weight: 600; }
+.chipsel { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chipsel label { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.8rem; min-height: 44px; border: 1px solid var(--rule-strong); border-radius: 2rem; cursor: pointer; font-weight: 500; background: var(--surface); }
+.chipsel label:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); }
+.chipsel input { accent-color: var(--accent); }
+.wizard-steps { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 0; padding: 0; }
+.wizard-steps li { list-style: none; color: var(--ink-mute); font-weight: 500; }
+.wizard-steps li[aria-current="step"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); }
+.checklist { margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.checklist li { list-style: none; display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; }
+.checklist svg { width: 18px; height: 18px; margin-top: 0.25rem; color: var(--ink-mute); }
+
+/* Review screen */
+.review-bar { position: sticky; bottom: 0; z-index: 4; background: var(--surface); border-top: 1px solid var(--rule); box-shadow: var(--shadow); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.review-bar .wrap { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; padding-block: 0.9rem; }
+.review-bar .spacer { flex: 1 1 12rem; font-size: 0.92rem; color: var(--ink-soft); }
+.exact { display: grid; gap: 0.6rem; margin: 0; padding: 0; }
+.exact li { list-style: none; display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; font-size: 0.95rem; }
+.exact svg { width: 17px; height: 17px; margin-top: 0.25rem; color: var(--ink-soft); }
+.fp { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.04em; }
+.conseq { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.5rem; font-size: 0.97rem; }
+.note-ins { border-left: 3px solid var(--info); padding: 0.9rem 1.1rem; background: var(--info-tint); border-radius: 0 var(--r) var(--r) 0; display: grid; gap: 0.4rem; }
+.note-ins blockquote { margin: 0; font-family: var(--serif); font-size: 1.05rem; }
+.toggle { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.95rem; cursor: pointer; min-height: 44px; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* Conversation and record */
+.msgs { display: grid; gap: 0.75rem; }
+.msg { display: grid; gap: 0.2rem; padding: 0.8rem 1rem; border-radius: var(--r); background: var(--surface); border: 1px solid var(--rule); max-width: 46rem; }
+.msg.ins { background: var(--info-tint); border-color: transparent; }
+.msg .from { font-size: 0.88rem; color: var(--ink-mute); }
+.msg .from b { color: var(--ink); font-weight: 600; }
+.log { margin: 0; padding: 0; }
+.log li { list-style: none; display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1rem; padding: 0.75rem 0; border-top: 1px solid var(--rule); }
+.log time { color: var(--ink-mute); font-size: 0.9rem; }
+
+/* Dialog */
+.dropzone { border: 2px dashed var(--line, #999); border-radius: 4px; padding: .8rem 1rem; margin-bottom: .8rem; display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.dropzone .hint { flex-basis: 100%; }
+.scrim { position: fixed; inset: 0; background: oklch(0.2 0.01 50 / 0.45); z-index: 30; display: grid; place-items: center; padding: 16px; padding-top: max(16px, env(safe-area-inset-top, 0px)); padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); }
+.dialog { background: var(--surface); border-radius: 4px; box-shadow: var(--shadow); width: min(36rem, 100%); max-height: 100%; overflow: auto; padding: 1.5rem; display: grid; gap: 1rem; }
+.dialog .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: flex-end; }
+
+/* Toast */
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); z-index: 40; background: var(--ink); color: var(--paper); padding: 0.75rem 1.1rem; border-radius: var(--r); box-shadow: var(--shadow); max-width: calc(100% - 32px); font-size: 0.95rem; }
+
+/* Prototype controls (simulation) */
+.proto-btn { position: fixed; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 20; background: var(--sim-tint); color: var(--sim); border: 2px dashed var(--sim); border-radius: var(--r); padding: 0.55rem 0.9rem; min-height: 44px; font-family: var(--mono); font-size: 0.85rem; font-weight: 500; cursor: pointer; box-shadow: var(--shadow); }
+.proto { position: fixed; top: 0; right: 0; bottom: 0; width: min(25rem, 100%); z-index: 25; background: var(--surface); border-left: 2px dashed var(--sim); box-shadow: var(--shadow); overflow: auto; padding: calc(1.25rem + env(safe-area-inset-top, 0px)) calc(1.25rem + env(safe-area-inset-right, 0px)) calc(1.25rem + env(safe-area-inset-bottom, 0px)) 1.25rem; display: grid; gap: 1.25rem; align-content: start; font-size: 0.95rem; }
+.proto h2 { font-family: var(--mono); font-size: 0.95rem; color: var(--sim); font-weight: 500; }
+.proto h3 { font-family: var(--sans); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-mute); margin-bottom: 0.4rem; }
+.proto .opts { display: grid; gap: 0.4rem; }
+.proto .opt { text-align: left; display: grid; gap: 0.1rem; padding: 0.55rem 0.7rem; border: 1px solid var(--rule); border-radius: var(--r); background: var(--paper); cursor: pointer; min-height: 44px; }
+.proto .opt[aria-pressed="true"] { border-color: var(--sim); box-shadow: inset 0 0 0 1px var(--sim); }
+.proto .opt small { color: var(--ink-mute); }
+.proto .opt:hover { border-color: var(--sim); }
+.proto-btn.inline { position: static; box-shadow: none; order: 9; }
+@media (min-width: 641px) { .proto-btn.inline { order: -1; } }
+/* Self-test mode */
+.testbar { position: sticky; top: calc(var(--toph, 64px) + env(safe-area-inset-top, 0px)); z-index: 4; background: var(--sim-tint); border-bottom: 2px dashed var(--sim); }
+.testbar .wrap { display: flex; gap: 0.6rem 1rem; align-items: center; flex-wrap: wrap; padding-block: 0.6rem; }
+.testbar .tb-text { flex: 1 1 20rem; min-width: 0; font-size: 0.95rem; }
+.testbar .tb-text b { font-family: var(--mono); font-weight: 500; color: var(--sim); margin-right: 0.4rem; }
+.testbar .btn { min-height: 40px; padding-block: 0.35rem; }
+.tscreen { max-width: 44rem; }
+.tscreen .task-card { border: 2px dashed var(--sim); background: var(--sim-tint); border-radius: var(--r); padding: 1.1rem 1.25rem; font-size: 1.1rem; }
+.scale { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.scale label { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 44px; padding: 0.3rem 0.8rem; border: 1px solid var(--rule-strong); border-radius: 2rem; cursor: pointer; font-weight: 500; background: var(--surface); }
+.scale label:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); }
+.scale input { accent-color: var(--accent); }
+.choices { display: grid; gap: 0.6rem; }
+.choice-btn { display: grid; gap: 0.2rem; text-align: left; padding: 0.85rem 1rem; min-height: 44px; border: 1px solid var(--rule-strong); border-radius: var(--r); background: var(--surface); cursor: pointer; }
+.choice-btn strong { font-size: 1.02rem; }
+.choice-btn span { font-size: 0.9rem; color: var(--ink-soft); }
+.choice-btn.primary { border: 2px solid var(--accent); }
+.choice-btn:hover { background: var(--paper-deep); }
+.intro { background: var(--sim-tint); border: 1px dashed var(--sim); border-radius: var(--r); padding: 0.8rem 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.95rem; }
+.intro p { flex: 1 1 18rem; }
+
+@media (max-width: 860px) {
+  .two { grid-template-columns: minmax(0, 1fr); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  body { font-size: 16.5px; }
+  main { padding-block: 1.25rem 8rem; }
+  .top .wrap { gap: 0.5rem 1rem; }
+  .who { margin-left: 0; text-align: left; width: 100%; font-size: 0.8rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+  .who strong { display: inline; }
+  .launch { grid-template-columns: minmax(0, 1fr); }
+  .launch > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+  .task { grid-template-columns: auto minmax(0, 1fr); }
+  .task > .btn { grid-column: 1 / -1; }
+  .wait li { grid-template-columns: minmax(0, 1fr); }
+  .figure { grid-template-columns: minmax(0, 1fr); }
+  .figure .thumb { max-width: 16rem; }
+  .log li { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; }
+  .grid-wrap { border: 0; background: transparent; overflow: visible; }
+  table.ready, table.ready tbody, table.ready tr, table.ready td { display: block; width: 100%; }
+  table.ready thead { display: none; }
+  table.ready tr { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); margin-bottom: 0.75rem; padding: 0.4rem 0; }
+  table.ready td { border: 0; padding: 0.45rem 1rem; display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 0.5rem; }
+  table.ready td::before { content: attr(data-label); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; padding-top: 0.2rem; }
+  table.ready td.lang { grid-template-columns: minmax(0, 1fr); font-size: 1.05rem; }
+  table.ready td.lang::before { display: none; }
+  table.ready td.open { grid-template-columns: minmax(0, 1fr); }
+  table.ready td.open::before { display: none; }
+  .review-bar .spacer { flex-basis: 100%; }
+  .review-bar .wrap:has(.btn.primary) .spacer { display: none; }
+  .proto-btn.inline { padding: 0.3rem 0.6rem; min-height: 36px; font-size: 0.75rem; }
+  .review-bar .btn { flex: 1 1 auto; }
+  .review-bar .btn.primary { flex-basis: 100%; order: -1; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<div id="app"></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+'use strict';
+
+/* ---------- Fictional reference data ---------- */
+const LANGS = {
+  en: { name: 'English', native: 'English' }, fi: { name: 'Finnish', native: 'Suomi' }, sv: { name: 'Swedish', native: 'Svenska' },
+  de: { name: 'German', native: 'Deutsch' }, no: { name: 'Norwegian', native: 'Norsk' }, da: { name: 'Danish', native: 'Dansk' }, et: { name: 'Estonian', native: 'Eesti' }
+};
+const PEOPLE = {
+  maria: { name: 'Maria Lind', first: 'Maria', title: 'Communications Manager', role: 'approver' },
+  petra: { name: 'Petra Koski', first: 'Petra', title: 'CEO', role: 'approver' },
+  jonas: { name: 'Jonas Berg', first: 'Jonas', title: 'Marketing Coordinator', role: 'contributor' },
+  eero: { name: 'Eero Salo', first: 'Eero', title: 'Sales Director', role: 'viewer' },
+  anna: { name: 'Anna Virtanen', first: 'Anna', title: 'Editor, INS', ins: true },
+  // The person taking the self-test, as Norrvik's client admin (name set when the test starts)
+  tester: { name: 'You', first: 'there', title: 'Communications manager', role: 'tester' }
+};
+const ROLES = {
+  admin: { user: 'tester', label: 'Client admin', desc: 'The tester · prepares material, approves it and looks after the account' },
+  approver: { user: 'maria', label: 'Approver', desc: 'Maria Lind · can add material and approve' },
+  contributor: { user: 'jonas', label: 'Contributor', desc: 'Jonas Berg · can add material, cannot approve' },
+  viewer: { user: 'eero', label: 'Viewer', desc: 'Eero Salo · can only look' }
+};
+// Helsinki is UTC+3 in summer time (until 25 Oct 2026) and UTC+2 after.
+const D = s => new Date(s + ((s >= '2026-03-29T03' && s < '2026-10-25T04') ? '+03:00' : '+02:00'));
+const fmtD = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Helsinki' });
+const fmtDay = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/Helsinki' });
+const fmtLong = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Helsinki' });
+const when = d => d ? fmtD.format(d).replace(',', '') : '';
+const day = d => d ? fmtDay.format(d) : '';
+const longWhen = d => d ? fmtLong.format(d).replace(' at ', ', ') + ' (Helsinki)' : '';
+
+const TEXT = {
+  en1: { headline: 'Norrvik Pumps launches AquaLine X3, the most efficient pump we have ever built', body: [
+    'Norrvik Pumps today introduced AquaLine X3, a circulation pump for district heating networks and large residential buildings. In tests at VTT, the pump used up to 30 percent less electricity than its predecessor at the same flow rate.',
+    'AquaLine X3 adjusts its speed to demand every second and reports its condition to the building’s control system. It fits existing installations without changes to the pipework.',
+    '“Property owners want lower energy bills without a renovation project. X3 gives them that on day one,” says Petra Koski, CEO of Norrvik Pumps.',
+    'AquaLine X3 is available in the Nordic countries from 1 December 2026.'] },
+  en2: { headline: 'AquaLine X3 cuts circulation pump energy use by up to 30 percent', body: [
+    'Norrvik Pumps today introduced AquaLine X3, a circulation pump for district heating networks and large residential buildings. In independent tests at VTT, it used up to 30 percent less electricity than its predecessor at the same flow rate.',
+    'AquaLine X3 adjusts its speed to demand every second and reports its condition to the building’s control system. It fits existing installations without changes to the pipework.',
+    '“Property owners want lower energy bills without a renovation project. X3 gives them that on day one,” says Petra Koski, CEO of Norrvik Pumps.',
+    'AquaLine X3 is available in the Nordic countries from 1 December 2026.'] },
+  fi1: { headline: 'Norrvik Pumps tuo markkinoille AquaLine X3:n, tehokkaimman koskaan valmistamamme pumpun', body: [
+    'Norrvik Pumps esitteli tänään AquaLine X3 -kiertovesipumpun kaukolämpöverkkoihin ja suuriin asuinrakennuksiin. VTT:n testeissä pumppu kulutti samalla virtaamalla jopa 30 prosenttia vähemmän sähköä kuin edeltäjänsä.',
+    'AquaLine X3 säätää nopeuttaan kysynnän mukaan joka sekunti ja raportoi kuntonsa rakennuksen ohjausjärjestelmään. Se sopii olemassa oleviin asennuksiin ilman putkimuutoksia.',
+    '”Kiinteistönomistajat haluavat pienemmät energialaskut ilman remonttia. X3 antaa sen ensimmäisestä päivästä alkaen”, sanoo Norrvik Pumpsin toimitusjohtaja Petra Koski.',
+    'AquaLine X3 on saatavilla Pohjoismaissa 1. joulukuuta 2026 alkaen.'] },
+  fi2: { headline: 'AquaLine X3 vähentää kiertovesipumpun energiankulutusta jopa 30 prosenttia', body: [
+    'Norrvik Pumps esitteli tänään AquaLine X3 -kiertovesipumpun kaukolämpöverkkoihin ja suuriin asuinrakennuksiin. Riippumattomissa VTT:n testeissä pumppu kulutti samalla virtaamalla jopa 30 prosenttia vähemmän sähköä kuin edeltäjänsä.',
+    'AquaLine X3 säätää nopeuttaan kysynnän mukaan joka sekunti ja raportoi kuntonsa rakennuksen ohjausjärjestelmään. Se sopii olemassa oleviin asennuksiin ilman putkimuutoksia.',
+    '”Kiinteistönomistajat haluavat pienemmät energialaskut ilman remonttia. X3 antaa sen ensimmäisestä päivästä alkaen”, sanoo Norrvik Pumpsin toimitusjohtaja Petra Koski.',
+    'AquaLine X3 on saatavilla Pohjoismaissa 1. joulukuuta 2026 alkaen.'] },
+  sv1: { headline: 'Norrvik Pumps lanserar AquaLine X3, den mest effektiva pump vi någonsin byggt', body: [
+    'Norrvik Pumps presenterade i dag AquaLine X3, en cirkulationspump för fjärrvärmenät och stora bostadshus. I tester vid VTT använde pumpen upp till 30 procent mindre el än sin föregångare vid samma flöde.',
+    'AquaLine X3 anpassar varvtalet efter behovet varje sekund och rapporterar sitt skick till fastighetens styrsystem. Den passar befintliga installationer utan ändringar i rördragningen.',
+    '– Fastighetsägare vill ha lägre energiräkningar utan ett renoveringsprojekt. X3 ger dem det från första dagen, säger Petra Koski, vd för Norrvik Pumps.',
+    'AquaLine X3 finns i de nordiska länderna från den 1 december 2026.'] },
+  sv2: { headline: 'AquaLine X3 sänker cirkulationspumpens energianvändning med upp till 30 procent', body: [
+    'Norrvik Pumps presenterade i dag AquaLine X3, en cirkulationspump för fjärrvärmenät och stora bostadshus. I oberoende tester vid VTT använde pumpen upp till 30 procent mindre el än sin föregångare vid samma flöde.',
+    'AquaLine X3 anpassar varvtalet efter behovet varje sekund och rapporterar sitt skick till fastighetens styrsystem. Den passar befintliga installationer utan ändringar i rördragningen.',
+    '– Fastighetsägare vill ha lägre energiräkningar utan ett renoveringsprojekt. X3 ger dem det från första dagen, säger Petra Koski, vd för Norrvik Pumps.',
+    'AquaLine X3 finns i de nordiska länderna från den 1 december 2026.'] },
+  hu: { headline: 'Harbor Utilities halves pumping costs at Vaasa harbour with Norrvik pumps', body: [
+    'Harbor Utilities replaced twelve ageing pumps in the Vaasa harbour heating network with Norrvik AquaLine X2 units in spring 2026.',
+    'Six months on, the network’s pumping electricity is down 48 percent, and the utility has had no unplanned stops.'] }
+};
+const PHOTO2 = { en: 'AquaLine X3 installed in a residential plant room in Vaasa.', fi: 'AquaLine X3 asennettuna asuinrakennuksen lämmönjakohuoneeseen Vaasassa.', sv: 'AquaLine X3 installerad i en undercentral i ett bostadshus i Vasa.' };
+const INS_NOTE = 'We moved the measured saving into the headline. Editors and search engines pick up concrete claims, and readers can’t check “the most efficient pump we have ever built”. We also added “independent”, because VTT ran the tests for you, not with you.';
+
+/* ---------- Illustrations (simple flat drawings stand in for photos) ---------- */
+function art(kind) {
+  const bg = '<rect width="160" height="100" fill="var(--paper-deep)"/>';
+  if (kind === 'rig') return `<svg viewBox="0 0 160 100" aria-hidden="true">${bg}<rect x="0" y="78" width="160" height="22" fill="var(--rule)"/><rect x="10" y="52" width="140" height="8" fill="var(--rule-strong)"/><rect x="58" y="30" width="34" height="40" rx="3" fill="var(--accent)"/><rect x="92" y="38" width="30" height="24" rx="2" fill="var(--ink-soft)"/><circle cx="75" cy="50" r="9" fill="var(--paper)"/><rect x="66" y="70" width="18" height="8" fill="var(--ink-soft)"/></svg>`;
+  if (kind === 'panel') return `<svg viewBox="0 0 160 100" aria-hidden="true">${bg}<rect x="30" y="14" width="100" height="72" rx="4" fill="var(--ink)"/><rect x="40" y="24" width="80" height="34" fill="var(--info-tint)"/><rect x="46" y="44" width="8" height="10" fill="var(--ok)"/><rect x="58" y="38" width="8" height="16" fill="var(--ok)"/><rect x="70" y="32" width="8" height="22" fill="var(--ok)"/><rect x="82" y="40" width="8" height="14" fill="var(--ok)"/><circle cx="52" cy="72" r="5" fill="var(--accent)"/><circle cx="68" cy="72" r="5" fill="var(--paper-deep)"/></svg>`;
+  if (kind === 'room') return `<svg viewBox="0 0 160 100" aria-hidden="true">${bg}<rect x="0" y="0" width="160" height="12" fill="var(--rule)"/><rect x="18" y="0" width="8" height="100" fill="var(--rule-strong)"/><rect x="134" y="0" width="8" height="100" fill="var(--rule-strong)"/><rect x="26" y="40" width="108" height="7" fill="var(--rule-strong)"/><rect x="62" y="30" width="30" height="36" rx="3" fill="var(--accent)"/><rect x="92" y="36" width="24" height="22" rx="2" fill="var(--ink-soft)"/><rect x="0" y="86" width="160" height="14" fill="var(--rule)"/></svg>`;
+  if (kind === 'harbor') return `<svg viewBox="0 0 160 100" aria-hidden="true">${bg}<rect x="0" y="66" width="160" height="34" fill="var(--info-tint)"/><path d="M0 72 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="var(--info)" fill="none"/><rect x="104" y="18" width="5" height="48" fill="var(--ink-soft)"/><rect x="80" y="18" width="50" height="4" fill="var(--ink-soft)"/><rect x="20" y="44" width="50" height="22" fill="var(--accent)"/></svg>`;
+  return `<svg viewBox="0 0 160 100" aria-hidden="true">${bg}<circle cx="80" cy="50" r="18" fill="var(--rule-strong)"/></svg>`;
+}
+
+/* ---------- Icons ---------- */
+const I = {
+  check: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>',
+  alert: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 2.5l8 14.5H2z" stroke-linejoin="round"/><path d="M10 8v4M10 14.5v.5"/></svg>',
+  clock: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 5.5V10l3 2"/></svg>',
+  dot: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6.5" stroke-dasharray="3 2.6"/></svg>',
+  pen: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z" stroke-linejoin="round"/></svg>',
+  eye: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1.5 10S5 4 10 4s8.5 6 8.5 6-3.5 6-8.5 6S1.5 10 1.5 10z"/><circle cx="10" cy="10" r="2.5"/></svg>',
+  globe: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M2.5 10h15M10 2.5c2.5 2.5 2.5 12.5 0 15M10 2.5c-2.5 2.5-2.5 12.5 0 15"/></svg>',
+  ins: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4h14v9H8l-4 3.5V13H3z" stroke-linejoin="round"/></svg>',
+  doc: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 2.5h7l3.5 3.5v11.5H5z" stroke-linejoin="round"/><path d="M8 10h5M8 13.5h5"/></svg>',
+  image: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="15" height="12" rx="1"/><path d="M2.5 13l4-4 4 4 2.5-2.5 4.5 4.5"/></svg>',
+  lock: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="9" width="12" height="8.5" rx="1"/><path d="M6.5 9V6.5a3.5 3.5 0 017 0V9"/></svg>',
+  people: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="7.5" cy="7" r="3"/><path d="M2 17c.5-3 2.7-4.5 5.5-4.5S12.5 14 13 17"/><circle cx="14" cy="6.5" r="2.3"/><path d="M14.5 11c2 .3 3.3 1.8 3.5 4"/></svg>'
+};
+
+/* ---------- Helpers ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const clone = o => JSON.parse(JSON.stringify(o), (k, v) => (typeof v === 'string' && /^\d{4}-\d\d-\d\dT/.test(v)) ? new Date(v) : v);
+const L = code => LANGS[code].name;
+const tag = (text, rule) => `<span class="tag${rule ? ' rule' : ''}" title="${rule ? 'An approved change to today’s business rules, not built yet' : 'Shown in the design but not built in the portal yet'}">${esc(text)}</span>`;
+const build = () => tag('Needs building');
+const prule = n => tag('Rule change ' + n, true);
+function fingerprint(obj) {
+  let h1 = 5381, h2 = 52711; const s = JSON.stringify(obj);
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = (h1 * 33) ^ c; h2 = (h2 * 33) ^ c; }
+  const hex = ((h1 >>> 0).toString(16).padStart(8, '0') + (h2 >>> 0).toString(16).padStart(8, '0')).toUpperCase();
+  return hex.slice(0, 4) + '-' + hex.slice(4, 8) + '-' + hex.slice(8, 12);
+}
+function wordDiff(a, b) {
+  const A = (a || '').split(/(\s+)/), B = (b || '').split(/(\s+)/);
+  const n = A.length, m = B.length, dp = Array.from({ length: n + 1 }, () => new Int32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) dp[i][j] = A[i] === B[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  // A mostly rewritten sentence reads better as "old, struck through" then "new" than as interleaved fragments.
+  const words = x => x.filter(t => t.trim()).length, common = A.filter((t, k) => t.trim()).length ? dp[0][0] - Math.min(A.filter(t => !t.trim()).length, B.filter(t => !t.trim()).length) : 0;
+  if (common < 0.5 * Math.max(words(A), words(B))) return `${a ? `<del>${esc(a)}</del> ` : ''}<ins>${esc(b)}</ins>`;
+  let i = 0, j = 0, out = '', del = '', add = '';
+  const flush = () => { if (del.trim()) out += `<del>${esc(del.trim())}</del>` + (add.trim() ? ' ' : ''); if (add.trim()) out += `<ins>${esc(add.trim())}</ins>`; if (del.trim() || add.trim()) out += ' '; del = add = ''; };
+  while (i < n && j < m) {
+    if (A[i] === B[j] && !A[i].trim() && (del || add)) { del += A[i]; add += B[j]; i++; j++; }
+    else if (A[i] === B[j]) { flush(); out += esc(A[i]); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) del += A[i++]; else add += B[j++];
+  }
+  while (i < n) del += A[i++]; while (j < m) add += B[j++]; flush();
+  return out;
+}
+
+/* ---------- State ---------- */
+let S;
+function emptyLang() { return { text: null, sent: [], approvals: [], review: null, live: null }; }
+// A photo is part of an approval once any language has sent it; before that it can simply be removed
+const photoSent = (c, id) => c.langs.some(k => c.lang[k].sent.some(e => e.snap.images.some(i => i.id === id)));
+function sentEntry(c, code, v, by, at, ins, text, note) {
+  const snap = { headline: text.headline, body: text.body.slice(), basedOn: text.basedOn ?? null,
+    images: c.images.map(im => ({ id: im.id, ver: im.ver, title: im.title, art: im.versions[im.ver - 1].art, caption: im.captions[code] || null })),
+    files: c.files.map(f => f.id) };
+  return { v, by, at, ins: !!ins, note: note || null, snap, fp: fingerprint(snap) };
+}
+function baseX3() {
+  const c = {
+    id: 'x3', name: 'AquaLine X3 product launch', source: 'en', langs: ['en', 'fi', 'sv'], mode: 'together',
+    requested: D('2026-11-12T09:00'), confirmed: null, created: D('2026-10-14T10:20'),
+    images: [
+      { id: 'rig', title: 'Pump on the test rig', ver: 1, versions: [{ v: 1, art: 'rig', by: 'jonas', at: D('2026-10-19T13:50') }],
+        captions: { en: 'AquaLine X3 on the test rig at Norrvik Pumps’ Vaasa plant.', fi: 'AquaLine X3 testipenkissä Norrvik Pumpsin Vaasan tehtaalla.', sv: 'AquaLine X3 i testriggen vid Norrvik Pumps fabrik i Vasa.' } },
+      { id: 'panel', title: 'Control panel close-up', ver: 1, versions: [{ v: 1, art: 'panel', by: 'jonas', at: D('2026-10-19T13:52') }],
+        captions: { en: 'The X3 control panel shows flow and energy use in real time.', fi: 'X3:n ohjauspaneeli näyttää virtaaman ja energiankulutuksen reaaliajassa.', sv: 'X3:s kontrollpanel visar flöde och energianvändning i realtid.' } }
+    ],
+    files: [{ id: 'sheet', title: 'AquaLine X3 datasheet', meta: 'PDF · 1.2 MB' }],
+    lang: { en: emptyLang(), fi: emptyLang(), sv: emptyLang() },
+    messages: [], log: []
+  };
+  return c;
+}
+function T(key, basedOn) { return { ...clone(TEXT[key]), basedOn: basedOn ?? null }; }
+// internal entries are INS-only and never shown in the client's record
+function logAdd(c, at, who, text, internal) { c.log.push({ at, who, text, internal: !!internal }); }
+
+function scenario(id) {
+  const c = baseX3();
+  const en = c.lang.en, fi = c.lang.fi, sv = c.lang.sv;
+  let now = D('2026-10-22T09:40');
+  // Shared history: English v1 sent and approved.
+  en.text = T('en1');
+  en.sent.push(sentEntry(c, 'en', 1, 'jonas', D('2026-10-19T14:02'), false, en.text));
+  logAdd(c, D('2026-10-19T14:02'), 'Jonas Berg', 'Sent English version 1 for approval');
+  en.approvals.push({ v: 1, by: 'maria', at: D('2026-10-20T09:15'), fp: en.sent[0].fp });
+  logAdd(c, D('2026-10-20T09:15'), 'Maria Lind', `Approved English version 1 · fingerprint ${en.sent[0].fp}`);
+  // INS suggestion → English v2
+  en.text = T('en2');
+  en.sent.push(sentEntry(c, 'en', 2, 'anna', D('2026-10-21T10:05'), true, en.text, INS_NOTE));
+  logAdd(c, D('2026-10-21T10:05'), 'Anna Virtanen, INS', 'Suggested changes to English (version 2). The approval of English version 1 no longer counts.');
+  c.messages.push({ who: 'anna', at: D('2026-10-21T10:12'), text: 'Hi Maria, I’ve suggested a new English headline with the measured saving up front. My reasons are in the suggestion. The Swedish caption for the test-rig photo is still missing.' });
+
+  if (id === 'today') {
+    c.images[0].captions.sv = null;
+    fi.text = T('fi1', 1);
+    fi.sent.push(sentEntry(c, 'fi', 1, 'jonas', D('2026-10-21T11:24'), false, fi.text));
+    logAdd(c, D('2026-10-21T11:24'), 'Jonas Berg', 'Sent Finnish version 1 for approval');
+    sv.text = T('sv1', 1);
+    logAdd(c, D('2026-10-21T11:40'), 'Jonas Berg', 'Saved the Swedish text (not sent yet)');
+    c.messages.push({ who: 'jonas', at: D('2026-10-21T11:30'), text: 'Finnish is sent for approval. The Swedish text is in; I’ll add the caption tomorrow.' });
+  } else {
+    // Everything approved on the new English.
+    en.approvals.push({ v: 2, by: 'maria', at: D('2026-10-22T10:02'), fp: en.sent[1].fp });
+    logAdd(c, D('2026-10-22T10:02'), 'Maria Lind', `Approved English version 2 (INS suggestion) · fingerprint ${en.sent[1].fp}`);
+    fi.text = T('fi1', 1); fi.sent.push(sentEntry(c, 'fi', 1, 'jonas', D('2026-10-21T11:24'), false, fi.text));
+    fi.text = T('fi2', 2); fi.sent.push(sentEntry(c, 'fi', 2, 'jonas', D('2026-10-22T13:10'), false, fi.text));
+    logAdd(c, D('2026-10-22T13:10'), 'Jonas Berg', 'Updated the Finnish translation to English version 2 and sent Finnish version 2 for approval');
+    sv.text = T('sv2', 2); sv.sent.push(sentEntry(c, 'sv', 1, 'jonas', D('2026-10-22T13:25'), false, sv.text));
+    logAdd(c, D('2026-10-22T13:25'), 'Jonas Berg', 'Sent Swedish version 1 for approval');
+    fi.approvals.push({ v: 2, by: 'maria', at: D('2026-10-22T14:01'), fp: fi.sent[1].fp });
+    sv.approvals.push({ v: 1, by: 'maria', at: D('2026-10-22T14:04'), fp: sv.sent[0].fp });
+    logAdd(c, D('2026-10-22T14:01'), 'Maria Lind', `Approved Finnish version 2 · fingerprint ${fi.sent[1].fp}`);
+    logAdd(c, D('2026-10-22T14:04'), 'Maria Lind', `Approved Swedish version 1 · fingerprint ${sv.sent[0].fp}`);
+    now = D('2026-10-22T14:30');
+    if (id !== 'checking') {
+      en.review = 2; fi.review = 2; sv.review = 1; c.confirmed = c.requested;
+      logAdd(c, D('2026-10-23T09:20'), 'INS', 'Checked English 2, Finnish 2 and Swedish 1', true);
+      logAdd(c, D('2026-10-23T09:25'), 'INS', 'Confirmed the launch time: ' + longWhen(c.requested));
+      now = D('2026-10-23T11:00');
+    }
+    if (id === 'live') {
+      for (const code of c.langs) { const ln = c.lang[code]; ln.live = { v: ln.sent.at(-1).v, at: D('2026-11-12T09:02') }; }
+      logAdd(c, D('2026-11-12T09:02'), 'INS', 'Published English, Finnish and Swedish together');
+      now = D('2026-11-12T10:15');
+    }
+    if (id === 'newphoto') {
+      const im = c.images[0];
+      im.versions.push({ v: 2, art: 'room', by: 'jonas', at: D('2026-10-23T13:40') }); im.ver = 2; im.title = 'Pump installed in a plant room';
+      im.captions = { en: 'AquaLine X3 installed in a residential plant room in Vaasa.', fi: 'AquaLine X3 asennettuna asuinrakennuksen lämmönjakohuoneeseen Vaasassa.', sv: 'AquaLine X3 installerad i en undercentral i ett bostadshus i Vasa.' };
+      for (const code of c.langs) { const ln = c.lang[code]; ln.sent.push(sentEntry(c, code, ln.sent.length + 1, 'jonas', D('2026-10-23T13:42'), false, ln.text)); }
+      logAdd(c, D('2026-10-23T13:42'), 'Jonas Berg', 'Replaced the test-rig photo and sent English 3, Finnish 3 and Swedish 2 for approval. The earlier approvals no longer count.');
+      c.messages.push({ who: 'jonas', at: D('2026-10-23T13:45'), text: 'We got a better installation photo from the Vaasa customer, so I swapped it in. Maria, it needs your approval again for all three languages.' });
+      now = D('2026-10-23T14:00');
+    }
+  }
+  c.log.sort((a, b) => a.at - b.at);
+  return { c, now };
+}
+function harbor() {
+  const c = { id: 'hu', name: 'Harbor Utilities customer case', source: 'en', langs: ['en'], mode: 'together',
+    requested: D('2026-10-02T10:00'), confirmed: D('2026-10-02T10:00'), created: D('2026-09-18T09:00'),
+    images: [{ id: 'h1', title: 'Vaasa harbour heating plant', ver: 1, versions: [{ v: 1, art: 'harbor', by: 'jonas', at: D('2026-09-20T10:00') }], captions: { en: 'The Vaasa harbour heating plant runs on twelve Norrvik pumps.' } }],
+    files: [], lang: { en: emptyLang() }, messages: [], log: [] };
+  const en = c.lang.en; en.text = T('hu');
+  en.sent.push(sentEntry(c, 'en', 1, 'jonas', D('2026-09-24T12:00'), false, en.text));
+  en.approvals.push({ v: 1, by: 'petra', at: D('2026-09-25T08:40'), fp: en.sent[0].fp });
+  en.review = 1; en.live = { v: 1, at: D('2026-10-02T10:01') };
+  logAdd(c, D('2026-09-24T12:00'), 'Jonas Berg', 'Sent English version 1 for approval');
+  logAdd(c, D('2026-09-25T08:40'), 'Petra Koski', `Approved English version 1 · fingerprint ${en.sent[0].fp}`);
+  logAdd(c, D('2026-10-02T10:01'), 'INS', 'Published English');
+  return c;
+}
+const SCENARIOS = [
+  { id: 'today', label: 'Today: mid-campaign', desc: 'Missing caption, approval outstanding, INS suggestion waiting' },
+  { id: 'checking', label: 'All approved, with INS', desc: 'Nothing for the client to do' },
+  { id: 'ready', label: 'Ready to launch', desc: 'INS has confirmed the time' },
+  { id: 'newphoto', label: 'New photo after approval', desc: 'Approvals replaced, launch waits' },
+  { id: 'live', label: 'Published', desc: 'All three languages online' },
+  { id: 'new', label: 'Start a new campaign', desc: 'Opens the three-step start' }
+];
+function load(id, keep) {
+  const sid = id === 'new' ? 'today' : id;
+  const { c, now } = scenario(sid);
+  S = { role: keep?.role || 'approver', scenario: id, now, campaigns: [c, harbor()],
+        view: id === 'new' ? { name: 'new', step: 1 } : { name: 'home' }, wiz: null, editing: null, dialog: null, pending: null,
+        panel: false, intro: keep ? keep.intro : true, markers: keep ? keep.markers : true, showDiff: true };
+  if (id === 'new') S.wiz = newWiz();
+}
+
+/* ---------- Derived state (mirrors the real rules) ---------- */
+const me = () => ROLES[S.role].user;
+const canEdit = () => S.role !== 'viewer';
+const canApprove = () => S.role === 'approver' || S.role === 'admin';
+const camp = id => S.campaigns.find(c => c.id === id);
+const lastSent = ln => ln.sent.at(-1) || null;
+// An approval counts only for the latest version sent (exact-version rule).
+const currentApproval = ln => { const s = lastSent(ln); if (!s) return null; const a = ln.approvals.filter(a => !a.withdrawn).at(-1); return a && a.v === s.v ? a : null; };
+const lastApproval = ln => ln.approvals.filter(a => !a.withdrawn).at(-1) || null;
+function snapNow(c, code) {
+  const ln = c.lang[code]; if (!ln.text) return null;
+  return { headline: ln.text.headline, body: ln.text.body.slice(), basedOn: ln.text.basedOn ?? null,
+    images: c.images.map(im => ({ id: im.id, ver: im.ver, title: im.title, art: im.versions[im.ver - 1].art, caption: im.captions[code] || null })),
+    files: c.files.map(f => f.id) };
+}
+const unsent = (c, code) => { const s = lastSent(c.lang[code]), n = snapNow(c, code); return !!n && (!s || JSON.stringify(n) !== JSON.stringify(s.snap)); };
+function missing(c, code) {
+  const ln = c.lang[code], out = [];
+  if (!ln.text || !ln.text.headline.trim()) out.push({ kind: 'text', label: `${L(code)} text` });
+  if (!c.images.length) out.push({ kind: 'photo', label: 'At least one photo' });
+  for (const im of c.images) if (!im.captions[code]) out.push({ kind: 'caption', label: `${L(code)} caption for “${im.title}”`, id: im.id });
+  return out;
+}
+function sourceApprovedV(c) { const a = currentApproval(c.lang[c.source]); return a ? a.v : null; }
+// A translation is out of date only when the English wording it was made from differs from the approved English wording.
+const srcWords = (c, v) => { const e = c.lang[c.source].sent.find(x => x.v === v); return e ? JSON.stringify([e.snap.headline, e.snap.body]) : null; };
+const wordingDiffers = (c, fromV, toV) => srcWords(c, fromV) !== srcWords(c, toV);
+function outdated(c, code) {
+  if (code === c.source) return false; const ln = c.lang[code]; const sv = sourceApprovedV(c);
+  return !!(ln.text && sv && wordingDiffers(c, ln.text.basedOn ?? 0, sv));
+}
+// English has a newer, undecided version whose wording differs from what this translation was made from.
+function sourcePending(c, code) {
+  if (code === c.source) return null; const src = c.lang[c.source], s = lastSent(src), ln = c.lang[code];
+  if (!s || currentApproval(src) || !ln.text) return null;
+  return wordingDiffers(c, ln.text.basedOn ?? 0, s.v) ? s : null;
+}
+function approversText(exclude) {
+  const names = Object.entries(PEOPLE).filter(([k, p]) => p.role === 'approver' || (k === 'tester' && S.role === 'admin')).map(([k, p]) => k === me() && !exclude ? 'you' : p.name);
+  return names.join(' or ');
+}
+function langState(c, code) {
+  const ln = c.lang[code], s = lastSent(ln), ca = currentApproval(ln), miss = missing(c, code), dirty = unsent(c, code);
+  if (ln.live && s && ln.live.v === s.v && !dirty) return { key: 'live', label: 'Published', tone: 'ok', icon: 'globe', owner: 'none' };
+  if (miss.length) return { key: 'missing', label: miss.length === 1 ? 'Missing: ' + miss[0].label.replace(L(code) + ' ', '') : `${miss.length} things missing`, tone: 'warn', icon: 'alert', owner: 'team', miss };
+  if (outdated(c, code)) return { key: 'outdated', label: `Translation needs updating`, tone: 'warn', icon: 'alert', owner: 'team' };
+  if (dirty && !ca) return { key: 'unsent', label: s ? 'New changes not sent' : 'Ready to send for approval', tone: 'act', icon: 'pen', owner: 'team' };
+  if (!ca) return s.ins ? { key: 'proposal', label: 'INS suggested changes', tone: 'act', icon: 'ins', owner: 'approvers' }
+                        : { key: 'awaiting', label: 'Waiting for approval', tone: 'act', icon: 'clock', owner: 'approvers' };
+  // INS's own check (ln.review) is internal: the client sees one state once a version is approved.
+  return { key: ln.review === ca.v ? 'ready' : 'checking', label: 'Approved · with INS', tone: 'ok', icon: 'check', owner: 'ins', dirty };
+}
+function campaignState(c) {
+  const st = c.langs.map(code => langState(c, code));
+  if (st.every(s => s.key === 'live')) return { tone: 'ok', icon: 'globe', label: 'Published', sentence: `Published ${day(c.lang[c.source].live.at)}. Everything is online.` };
+  const team = st.filter(s => ['missing', 'outdated', 'unsent'].includes(s.owner === 'team' ? s.key : '')).length;
+  const appr = st.filter(s => s.owner === 'approvers').length;
+  const ready = st.every(s => s.key === 'ready' || s.key === 'checking');
+  if (ready && c.confirmed) return { tone: 'ok', icon: 'check', label: 'Ready to launch', sentence: `Everything is approved. INS publishes at ${longWhen(c.confirmed)}.` };
+  if (ready) return { tone: 'info', icon: 'clock', label: 'Waiting for INS', sentence: 'Everything is approved. INS will confirm the launch time.' };
+  const parts = [];
+  if (team) parts.push(`${team} of ${st.length} language${st.length > 1 ? 's' : ''} ${team > 1 ? 'need' : 'needs'} material from your team`);
+  if (appr) parts.push(`${appr} ${appr > 1 ? 'languages need' : 'language needs'} an approver’s decision`);
+  if (!team && !appr) return { tone: 'info', icon: 'clock', label: 'Waiting for INS', sentence: 'Nothing is waiting for your team.' };
+  const anyLive = st.some(s => s.key === 'live') || c.langs.some(code => c.lang[code].live);
+  return { tone: 'act', icon: 'alert', label: anyLive ? 'Update in progress' : 'Not ready yet', sentence: (anyLive ? 'The published release stays online unchanged. The update isn’t ready yet: ' : 'Not ready to launch yet: ') + parts.join(', ') + '.' };
+}
+function pill(tone, icon, label) { return `<span class="pill t-${tone}">${I[icon] || ''}${esc(label)}</span>`; }
+
+/* Tasks across campaigns, split by who must act */
+function allTasks() {
+  const mine = [], colleagues = [], ins = [];
+  for (const c of S.campaigns) {
+    for (const code of c.langs) {
+      const st = langState(c, code), ln = c.lang[code], s = lastSent(ln), ctx = { cid: c.id, code, campaign: c.name, lang: L(code) };
+      if (st.owner === 'team') {
+        let title, why, act;
+        if (st.key === 'missing') { const m = st.miss[0]; title = m.kind === 'caption' ? `Add the ${L(code)} caption for “${c.images.find(i => i.id === m.id).title}”` : m.kind === 'text' ? `Add the ${L(code)} text` : 'Add a photo'; why = `${L(code)} can’t be sent for approval until it has this.`; act = 'Add it'; }
+        else if (st.key === 'outdated') { title = `Update the ${L(code)} translation`; why = `English changed in version ${sourceApprovedV(c)}. This translation was made from version ${ln.text.basedOn}, so it can’t be published until it’s updated.`; act = 'Update'; }
+        else { title = s ? `Send your ${L(code)} changes for approval` : `Send ${L(code)} for approval`; why = 'The material is complete. An approver can approve it once it’s sent.'; act = 'Review and send'; }
+        const prep = c.preparer || 'jonas', mineToDo = canEdit() && (S.role === 'contributor' || S.role === 'admin' || prep === me());
+        (mineToDo ? mine : colleagues).push({ ...ctx, title, why, act, view: 'lang', who: `${PEOPLE[prep].name} (prepares the material)`, icon: st.key === 'unsent' ? 'pen' : 'alert', tone: st.tone, focus: st.key === 'missing' && st.miss[0].kind === 'caption' ? `cap-${st.miss[0].id}-${code}` : null });
+      } else if (st.owner === 'approvers') {
+        const t = st.key === 'proposal' ? { title: `Decide on INS’s suggested changes to ${L(code)}`, why: `Anna Virtanen at INS suggested new wording. It’s only used if an approver approves it, and ${L(code)} can’t launch until someone decides.`, act: 'See the changes' }
+                                        : { title: `Approve ${L(code)} · version ${s.v}`, why: `Sent by ${PEOPLE[s.by].name} ${day(s.at)}.` + (sourcePending(c, code) ? ' Decide on English first: it has new wording waiting, and this translation may need updating.' : ''), act: 'Review and approve' };
+        if (canApprove()) mine.push({ ...ctx, ...t, view: 'review', v: s.v, who: 'You', icon: st.key === 'proposal' ? 'ins' : 'check', tone: 'act' });
+        else colleagues.push({ ...ctx, ...t, view: 'review', v: s.v, who: approversText(true), icon: 'clock', tone: 'mute' });
+      }
+    }
+    const sts = c.langs.map(code => langState(c, code));
+    if (!c.confirmed && sts.every(s => s.key === 'checking' || s.key === 'ready')) ins.push({ cid: c.id, campaign: c.name, title: 'Confirm the launch time', why: `Norrvik requested ${longWhen(c.requested)}.`, who: 'INS' });
+    if (c.confirmed && sts.every(s => s.key === 'ready' || s.key === 'checking')) ins.push({ cid: c.id, campaign: c.name, title: 'Publish', why: `At ${longWhen(c.confirmed)}. INS publishes by hand, never earlier.`, who: 'INS' });
+  }
+  return { mine, colleagues, ins };
+}
+
+/* ---------- Rendering ---------- */
+const app = document.getElementById('app');
+function render() {
+  const v = S.view;
+  let body = '';
+  if (v.name === 'home') body = viewHome();
+  else if (v.name === 'campaigns') body = viewCampaigns();
+  else if (v.name === 'campaign') body = viewCampaign(camp(v.cid));
+  else if (v.name === 'lang') body = viewLang(camp(v.cid), v.code);
+  else if (v.name === 'review') body = viewReview(camp(v.cid), v.code, v.v);
+  else if (v.name === 'record') body = viewRecord(camp(v.cid));
+  else if (v.name === 'new') body = viewNew();
+  if (TST && TST.active && TST.step !== 'task') { app.innerHTML = viewTest(); return; }
+  const n = allTasks().mine.length;
+  app.innerHTML = `
+  <header class="top"><div class="wrap">
+    <button class="logo" data-act="go" data-view="home" aria-label="INS Client portal, home"><b>/ins</b><span>Client portal</span></button>
+    <nav class="nav" aria-label="Main">
+      <button data-act="go" data-view="home" ${v.name === 'home' ? 'aria-current="page"' : ''}>To-dos${n ? `<span class="badge-count" aria-hidden="true">${n}</span><span class="sr">, ${n} for you</span>` : ''}</button>
+      <button data-act="go" data-view="campaigns" ${['campaigns', 'campaign', 'lang', 'review', 'record', 'new'].includes(v.name) ? 'aria-current="page"' : ''}>Campaigns</button>
+    </nav>
+    <div class="who"><label for="as-role" class="muted small">Norrvik Pumps Oy · view as</label>
+      <select id="as-role" class="as-role" aria-label="View the portal as">${Object.entries(ROLES).map(([k, r]) => `<option value="${k}" ${S.role === k ? 'selected' : ''}>${esc(PEOPLE[r.user].name)} · ${esc(r.label)}</option>`).join('')}</select></div>
+  </div></header>${TST && TST.active ? testBar() : ''}
+  <main id="main" tabindex="-1">${S.intro ? `<div class="wrap" style="margin-bottom:1.5rem"><div class="intro"><p><strong>Clickable prototype.</strong> Fictional company and data. Nothing is saved or sent anywhere. ${showControls() ? 'Use <strong>Prototype controls</strong> (bottom right) to switch person or situation and to play INS’s part.' : 'Use “View as” at the top right to see the portal as each person at Norrvik Pumps Oy.'}</p><div class="row"><button class="btn primary" data-act="test-open">Taking part in the user test? Start here</button><button class="btn" data-act="intro-off">Got it</button></div></div></div>` : ''}${body}</main>
+  ${v.name === 'review' || (TST && TST.active) || !showControls() ? '' : `<button class="proto-btn" data-act="panel" aria-expanded="${S.panel}">Prototype controls</button>`}
+  ${S.panel && showControls() ? viewPanel() : ''}
+  ${S.dialog ? viewDialog() : ''}`;
+}
+
+function viewHome() {
+  const t = allTasks(), p = PEOPLE[me()];
+  const hour = +new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Europe/Helsinki' }).format(S.now), greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const taskCard = x => `<div class="task">
+      <div class="ico t-${x.tone || 'act'}">${I[x.icon] || I.clock}</div>
+      <div><div class="task-title">${esc(x.title)}</div><div class="task-meta">${esc(x.campaign)}${x.lang ? ' · ' + esc(x.lang) : ''}</div><div class="small" style="color:var(--ink-soft)">${esc(x.why)}</div></div>
+      <button class="btn primary" data-act="go" data-view="${x.view}" data-cid="${x.cid}" data-code="${x.code}" ${x.v ? `data-v="${x.v}"` : ''} ${x.focus ? `data-focus="${x.focus}"` : ''}>${esc(x.act)}</button>
+    </div>`;
+  const waitRow = x => `<li><span class="who-w">${esc(x.who)}</span><span>${esc(x.title)}<span class="task-meta"> · ${esc(x.campaign)}</span><br><span class="small muted">${esc(x.why)}</span></span></li>`;
+  return `<div class="wrap stack-lg">
+    <div class="stack" style="gap:.4rem"><h1>${greet}, ${esc(p.first)}</h1>
+      <p class="muted">${t.mine.length ? `${t.mine.length} thing${t.mine.length > 1 ? 's need' : ' needs'} you.` : 'Nothing needs you right now.'} ${S.role === 'viewer' ? 'You can view campaigns but not change them.' : ''}</p></div>
+    <section aria-labelledby="h-you"><div class="section-head"><h2 id="h-you">For you</h2>${S.role !== 'viewer' ? `<button class="btn" data-act="go" data-view="new">Start a campaign</button>` : ''}</div>
+      ${t.mine.length ? `<div class="tasks">${t.mine.map(taskCard).join('')}</div>` : `<div class="empty">You’re up to date. ${S.role === 'viewer' ? 'Viewers don’t get tasks.' : `New tasks appear here, and we’ll e-mail you. ${build()}`}</div>`}
+    </section>
+    <section aria-labelledby="h-col"><div class="section-head"><h2 id="h-col">Waiting for your colleagues</h2></div>
+      ${t.colleagues.length ? `<ul class="wait">${t.colleagues.map(waitRow).join('')}</ul>` : `<p class="muted">No one on your team is holding anything up.</p>`}
+    </section>
+    <section aria-labelledby="h-ins"><div class="section-head"><h2 id="h-ins">Waiting for INS</h2></div>
+      ${t.ins.length ? `<ul class="wait">${t.ins.map(waitRow).join('')}</ul>` : `<p class="muted">INS isn’t holding anything up.</p>`}
+    </section>
+    <section aria-labelledby="h-camp"><div class="section-head"><h2 id="h-camp">Your campaigns</h2></div>${campaignCards()}</section>
+  </div>`;
+}
+function campaignCards() {
+  return `<div class="cards">${S.campaigns.map(c => {
+    const cs = campaignState(c);
+    return `<button class="ccard" data-act="go" data-view="campaign" data-cid="${c.id}">
+      <span class="row" style="justify-content:space-between"><span class="eyebrow">${c.langs.map(L).join(' · ')}</span>${pill(cs.tone, cs.icon, cs.label)}</span>
+      <span class="ccard-title">${esc(c.name)}</span>
+      <span class="small" style="color:var(--ink-soft)">${esc(cs.sentence)}</span>
+      <span class="chips">${c.langs.map(code => { const st = langState(c, code); return pill(st.tone, st.icon, L(code) + ': ' + st.label); }).join('')}</span>
+      <span class="small muted tnum">Requested ${esc(when(c.requested))} · ${c.confirmed ? 'Confirmed by INS' : 'Not confirmed yet'}</span>
+    </button>`; }).join('')}</div>`;
+}
+function viewCampaigns() {
+  return `<div class="wrap stack-lg"><div class="section-head"><h1>Campaigns</h1>${S.role !== 'viewer' ? `<button class="btn primary" data-act="go" data-view="new">Start a campaign</button>` : ''}</div>${campaignCards()}</div>`;
+}
+
+function cells(c, code) {
+  const ln = c.lang[code], st = langState(c, code), s = lastSent(ln), ca = currentApproval(ln), la = lastApproval(ln);
+  const cell = (tone, icon, text, sub) => `<div><span class="state c-${tone}">${I[icon]}<span>${esc(text)}</span></span>${sub ? `<span class="cell-sub">${esc(sub)}</span>` : ''}</div>`;
+  let mat;
+  if (st.key === 'missing') mat = cell('warn', 'alert', st.miss.length === 1 ? st.miss[0].label.replace(L(code) + ' ', '').replace(/^./, x => x.toUpperCase()) + ' missing' : `${st.miss.length} things missing`, 'Your team');
+  else if (st.key === 'outdated') mat = cell('warn', 'alert', 'Translation out of date', `Made from English ${ln.text.basedOn}; English is now ${sourceApprovedV(c)}`);
+  else if (unsent(c, code)) mat = cell('act', 'pen', 'Changes not sent', ca ? `Version ${ca.v} stays approved` : 'Your team');
+  else mat = cell('ok', 'check', 'Complete');
+  let ap;
+  if (ca) ap = cell('ok', 'check', `Approved · version ${ca.v}`, `${PEOPLE[ca.by].name}, ${day(ca.at)}`);
+  else if (s && st.key === 'proposal') ap = cell('act', 'ins', `INS suggestion · version ${s.v}`, `Decision: ${approversText()}`);
+  else if (s && !['missing', 'outdated'].includes(st.key) || (s && !ca)) ap = cell('act', 'clock', `Waiting · version ${s.v}`, `${approversText()}${la ? ` · version ${la.v} was approved` : ''}`);
+  else ap = cell('mute', 'dot', 'Not sent yet');
+  let on;
+  if (ln.live) on = cell('ok', 'globe', `Online · version ${ln.live.v}`, `Since ${when(ln.live.at)}${s && s.v !== ln.live.v ? ' · stays until INS publishes the update' : ''}`);
+  else on = cell('mute', 'dot', 'Not yet');
+  return { mat, ap, on };
+}
+function nextStep(c) {
+  const t = allTasks(), mine = t.mine.filter(x => x.cid === c.id), wait = t.colleagues.filter(x => x.cid === c.id), ins = t.ins.filter(x => x.cid === c.id);
+  const cs = campaignState(c);
+  if (mine.length) {
+    const x = mine[0];
+    return `<section class="next" aria-labelledby="h-next"><span class="eyebrow">Your next step${mine.length > 1 ? ` · 1 of ${mine.length}` : ''}</span><h2 id="h-next">${esc(x.title)}</h2><p style="color:var(--ink-soft)">${esc(x.why)}</p>
+      <div class="row"><button class="btn primary" data-act="go" data-view="${x.view}" data-cid="${c.id}" data-code="${x.code}" ${x.v ? `data-v="${x.v}"` : ''} ${x.focus ? `data-focus="${x.focus}"` : ''}>${esc(x.act)}</button>
+      ${mine.slice(1).map(y => `<button class="btn quiet" data-act="go" data-view="${y.view}" data-cid="${c.id}" data-code="${y.code}" ${y.v ? `data-v="${y.v}"` : ''}>Then: ${esc(y.title)}</button>`).join('')}</div></section>`;
+  }
+  const w = wait[0] || ins[0];
+  if (cs.label === 'Published') return `<section class="next done"><span class="eyebrow">Nothing to do</span><h2>${esc(cs.sentence)}</h2><p style="color:var(--ink-soft)">To change something, edit a language and send it for approval. The published version stays online until INS publishes your update.</p></section>`;
+  // Name every language the same people are waiting on, not just the first (user test 1: three languages, one shown)
+  const same = wait.length > 1 ? wait.filter(x => x.who === wait[0].who) : [];
+  if (same.length > 1) return `<section class="next calm"><span class="eyebrow">Nothing for you right now</span><h2>Waiting for ${esc(same[0].who)}</h2><ul style="margin:0;padding-left:1.2rem;display:grid;gap:.3rem">${same.map(x => `<li>${esc(x.title)}</li>`).join('')}</ul></section>`;
+  if (w) return `<section class="next calm"><span class="eyebrow">Nothing for you right now</span><h2>Waiting for ${esc(w.who)} to ${esc(w.title.charAt(0).toLowerCase() + w.title.slice(1))}</h2><p style="color:var(--ink-soft)">${esc(w.why)}</p></section>`;
+  return '';
+}
+function stepsStrip(c) {
+  if (!c.langs.length) return `<ol class="steps" aria-label="How a campaign moves">${[['Material', 'Your team adds text, photos and captions'], ['Approval', 'An approver at your company approves each language'], ['Launch time', 'INS confirms when it will be published'], ['Published', 'INS publishes by hand']].map((x, i) => `<li class="${i === 0 ? 'now' : ''}"><b>${x[0]}</b>${x[1]}</li>`).join('')}</ol>`;
+  const sts = c.langs.map(code => langState(c, code));
+  const allSent = sts.every(s => !['missing', 'outdated', 'unsent'].includes(s.key));
+  const allApproved = sts.every(s => ['checking', 'ready', 'live'].includes(s.key));
+  const allConfirmed = allApproved && !!c.confirmed;
+  const live = sts.every(s => s.key === 'live');
+  const k = [allSent, allApproved, allConfirmed, live];
+  const cur = k.indexOf(false);
+  const items = [['Material', 'Your team adds text, photos and captions'], ['Approval', 'An approver at your company approves each language'], ['Launch time', 'INS confirms when it will be published'], ['Published', 'INS publishes by hand']];
+  return `<ol class="steps" aria-label="How a campaign moves">${items.map((x, i) => `<li class="${k[i] ? 'done' : i === cur ? 'now' : ''}"><b>${k[i] ? '✓ ' : ''}${x[0]}</b>${x[1]}${i === cur ? '<span class="sr"> (current step)</span>' : ''}</li>`).join('')}</ol>`;
+}
+function atRisk(c) { return !!c.confirmed && !c.langs.some(k => c.lang[k].live) && c.langs.some(k => ['missing', 'outdated', 'unsent', 'awaiting', 'proposal'].includes(langState(c, k).key)); }
+function launchLine(c) {
+  const live = c.langs.map(code => c.lang[code].live).filter(Boolean);
+  const anyLive = live.length > 0;
+  return `<section aria-labelledby="h-launch"><div class="section-head"><h2 id="h-launch">Launch</h2>${canApprove() && !anyLive ? `<button class="btn" data-act="change-time" data-cid="${c.id}">Change requested time</button>` : ''}</div>
+    <div class="launch">
+      <div><span class="eyebrow">Requested by Norrvik</span><span class="when tnum">${esc(when(c.requested))}</span><span class="small muted">Helsinki time</span></div>
+      <div><span class="eyebrow">INS confirmed ${prule('R1')}</span>${c.confirmed ? `<span class="when tnum">${esc(when(c.confirmed))}</span><span class="small ${atRisk(c) ? 'c-warn' : 'muted'}">${atRisk(c) ? 'At risk: approvals are needed again' : 'INS publishes at this time, never earlier'}</span>` : `<span class="when none">Not confirmed yet</span><span class="small muted">INS confirms once everything is approved</span>`}</div>
+      <div><span class="eyebrow">Published</span>${anyLive ? `<span class="when tnum">${esc(when(live[0].at))}</span><span class="small muted">${live.length === c.langs.length ? 'All languages online' : `${live.length} of ${c.langs.length} languages online`}</span>` : `<span class="when none">Not yet</span><span class="small muted">INS publishes by hand</span>`}</div>
+    </div>
+    <p class="launch-note">${c.langs.length > 1 ? (c.mode === 'together' ? `<strong>All ${c.langs.length} languages launch together.</strong> If one language isn’t ready, none is published.` : '<strong>Each language launches on its own</strong> when it’s ready.') : ''} ${anyLive && canApprove() ? 'The time can’t be changed after launch. Contact INS if you need to.' : ''}</p>
+  </section>`;
+}
+function viewCampaign(c) {
+  const cs = campaignState(c);
+  const rows = c.langs.map(code => { const x = cells(c, code); return `<tr>
+    <td class="lang" data-label="Language">${esc(L(code))}<small>${code === c.source ? 'Original' : 'Translation'}</small></td>
+    <td data-label="Material">${x.mat}</td><td data-label="Approval">${x.ap}</td><td data-label="Published">${x.on}</td>
+    <td class="open" data-label=""><button class="btn" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">Open ${esc(L(code))}</button></td></tr>`; }).join('');
+  return `<div class="wrap stack-lg">
+    <div class="stack" style="gap:.5rem"><button class="back" data-act="go" data-view="campaigns">← All campaigns</button>
+      <span class="eyebrow">Norrvik Pumps Oy · Press release</span><h1>${esc(c.name)}</h1>
+      <div class="row">${pill(cs.tone, cs.icon, cs.label)}<span style="color:var(--ink-soft)">${esc(cs.sentence)}</span></div></div>
+    ${nextStep(c)}
+    ${stepsStrip(c)}
+    ${launchLine(c)}
+    <section aria-labelledby="h-ready"><div class="section-head"><h2 id="h-ready">What’s ready</h2><span class="small muted">Each language is approved separately</span></div>
+      <div class="grid-wrap"><table class="ready"><thead><tr><th>Language</th><th>Material</th><th>Approval</th><th>Published</th><th><span class="sr">Open</span></th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${canEdit() ? `<p class="small muted" style="margin-top:.6rem">Need another language? <button class="link" data-act="todo" data-msg="Adding a language works today in Materials; in this prototype it isn’t wired up.">Add a language</button></p>` : ''}
+    </section>
+    ${sharedMaterial(c)}
+    ${conversation(c)}
+    <section aria-labelledby="h-rec"><div class="section-head"><h2 id="h-rec">Approval record</h2><button class="btn" data-act="go" data-view="record" data-cid="${c.id}">See the full record</button></div>
+      <p class="muted">Every approval is kept with who approved, when, and a fingerprint of exactly what they saw. Nothing is deleted.</p></section>
+  </div>`;
+}
+function sharedMaterial(c) {
+  return `<section aria-labelledby="h-shared"><div class="section-head"><h2 id="h-shared">Photos and files</h2><span class="small muted">Shared by all languages · captions per language</span></div>
+    <div class="panel">${c.images.map(im => `<div class="figure"><span class="thumb">${art(im.versions[im.ver - 1].art)}</span><div class="stack" style="gap:.4rem"><strong>${esc(im.title)}</strong><span class="small muted">Photo version ${im.ver} · added by ${esc(PEOPLE[im.versions[im.ver - 1].by].name)} ${day(im.versions[im.ver - 1].at)}</span>
+      <span class="chips">${c.langs.map(code => im.captions[code] ? pill('ok', 'check', L(code) + ' caption') : pill('warn', 'alert', L(code) + ' caption missing')).join('')}</span>
+      ${canEdit() ? `<span class="row"><button class="btn" data-act="replace-photo" data-cid="${c.id}" data-id="${im.id}">Replace photo</button>${photoSent(c, im.id) ? '' : `<button class="btn quiet" data-act="remove-photo" data-cid="${c.id}" data-id="${im.id}">Remove photo</button>`}</span>` : ''}</div></div>`).join('') || '<p class="muted">No photos yet. INS needs at least one.</p>'}
+    ${c.files.map(f => `<div class="figure"><span class="thumb" style="display:grid;place-items:center;color:var(--ink-mute)">${I.doc.replace('<svg', '<svg width="36" height="36"')}</span><div class="stack" style="gap:.3rem"><strong>${esc(f.title)}</strong><span class="small muted">${esc(f.meta)} · attachment in every language</span></div></div>`).join('')}
+    ${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">Add another photo</button><button class="btn quiet" data-act="todo" data-msg="Attachments work today; not wired up in this prototype.">Add an attachment</button></div>` : ''}</div></section>`;
+}
+function conversation(c) {
+  return `<section aria-labelledby="h-conv" id="conversation"><div class="section-head"><h2 id="h-conv">Conversation with INS</h2><span class="small muted">Your team and the INS editors see this</span></div>
+    <div class="msgs">${c.messages.map(m => `<div class="msg ${PEOPLE[m.who].ins ? 'ins' : ''}"><span class="from"><b>${esc(PEOPLE[m.who].name)}</b>${PEOPLE[m.who].ins ? ' · INS' : ''} · ${esc(when(m.at))}</span><p>${esc(m.text)}</p></div>`).join('') || '<p class="muted">No messages yet.</p>'}</div>
+    ${S.role !== 'viewer' ? `<form class="stack" data-form="msg" data-cid="${c.id}" style="margin-top:1rem;max-width:46rem"><div class="field"><label for="msg-${c.id}">Write to INS</label><textarea id="msg-${c.id}" name="text" style="min-height:5rem;font-family:var(--sans);font-size:1rem" placeholder="Ask a question or explain a decision"></textarea><span class="hint">INS sees automatically when something is sent or approved, so there’s no need to tell them.</span></div><div><button class="btn" type="submit">Send message</button></div></form>` : ''}
+  </section>`;
+}
+
+function textBlock(text) {
+  return `<div class="hl">${esc(text.headline)}</div><div class="bd">${text.body.map(p => `<p>${esc(p)}</p>`).join('')}</div>`;
+}
+function viewLang(c, code) {
+  const ln = c.lang[code], st = langState(c, code), s = lastSent(ln), ca = currentApproval(ln), editing = S.editing && S.editing.cid === c.id && S.editing.code === code;
+  const src = c.lang[c.source], isTr = code !== c.source;
+  let banner = '';
+  const owners = { team: 'Your team', approvers: approversText(), ins: 'INS', none: '' };
+  if (st.key === 'missing') banner = `<div class="banner warn"><strong>${I.alert.replace('<svg', '<svg width="16" height="16" style="vertical-align:-2px"')} Before ${esc(L(code))} can be sent for approval, add:</strong><ul style="margin:0;padding-left:1.2rem">${st.miss.map(m => `<li>${esc(m.label)}</li>`).join('')}</ul></div>`;
+  else if (st.key === 'outdated') {
+    const from = src.sent.find(x => x.v === ln.text.basedOn), to = src.sent.find(x => x.v === sourceApprovedV(c));
+    banner = `<div class="banner warn"><strong>English changed after this translation was made.</strong><p>This translation was made from English version ${ln.text.basedOn}. English version ${to.v} is now approved. ${esc(L(code))} can’t be published until it’s updated and approved. What changed in English:</p><div class="article readonly" style="padding:1rem"><div class="hl" style="font-size:1.1rem">${wordDiff(from.snap.headline, to.snap.headline)}</div><div class="bd" style="font-size:1rem">${to.snap.body.map((p, i) => p !== from.snap.body[i] ? `<p>${wordDiff(from.snap.body[i] || '', p)}</p>` : '').join('')}</div></div>${canEdit() && !editing ? `<div><button class="btn primary" data-act="edit" data-cid="${c.id}" data-code="${code}">Update the ${esc(L(code))} text</button></div>` : ''}</div>`;
+  }
+  else if (st.key === 'unsent') banner = `<div class="banner act"><strong>${s ? `You have changes that aren’t sent yet.` : 'Everything INS needs is here.'}</strong><p>${s ? `Version ${s.v} is ${st.key === 'unsent' && !ca ? 'what approvers see now' : 'still the approved one'}. Sending creates version ${s.v + 1}.` : 'Send it so an approver can approve it.'}</p>${canEdit() ? `<div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div>` : ''}</div>`;
+  else if (st.key === 'proposal' || st.key === 'awaiting') banner = `<div class="banner act"><strong>${st.key === 'proposal' ? `INS suggested changes (version ${s.v}).` : `Version ${s.v} is waiting for your company’s approval.`}</strong><p>${canApprove() ? 'You’re an approver, so you can approve it.' : `Waiting for ${approversText(true)}.`} INS doesn’t approve your material: it publishes it once your approver has approved it.</p><div><button class="btn primary" data-act="go" data-view="review" data-cid="${c.id}" data-code="${code}" data-v="${s.v}">${canApprove() ? (st.key === 'proposal' ? 'See the changes and decide' : 'Review and approve') : 'See what they’ll approve'}</button></div></div>`;
+  else if (st.key === 'checking' || st.key === 'ready') banner = `<div class="banner ok"><strong>Version ${ca.v} is approved and with INS.</strong><p>${st.dirty ? `You have newer changes that aren’t sent. They are <em>not</em> part of the approval. ` : ''}${ln.live ? `Version ${ln.live.v} is online; INS publishes version ${ca.v} as an update.` : c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}.` : 'INS will confirm the launch time.'}</p>${st.dirty && canEdit() ? `<div><button class="btn" data-act="send" data-cid="${c.id}" data-code="${code}">Send the changes for approval</button></div>` : ''}</div>`;
+  else if (st.key === 'live') banner = `<div class="banner ok"><strong>Version ${ln.live.v} has been online since ${esc(when(ln.live.at))}.</strong><p>You can still make changes. They go through approval and INS publishes them as an update; until then the current version stays online.</p></div>`;
+
+  const textPart = editing ? textForm(c, code) : ln.text ? `<div class="article">${textBlock(ln.text)}<p class="small muted">${isTr ? `Translated from English version ${ln.text.basedOn ?? '–'} · ` : ''}${s && !unsent(c, code) ? `Same as version ${s.v}` : 'Saved draft'}</p>${canEdit() && !(isTr && outdated(c, code)) ? `<div><button class="btn" data-act="edit" data-cid="${c.id}" data-code="${code}">${I.pen.replace('<svg', '<svg width="16" height="16"')} Edit text</button></div>` : ''}</div>`
+    : `<div class="empty">No ${esc(L(code))} text yet.${canEdit() ? ` <button class="link" data-act="edit" data-cid="${c.id}" data-code="${code}">Add the text</button>` : ''}</div>`;
+
+  const photos = c.images.map(im => {
+    const cap = im.captions[code];
+    return `<div class="figure"><span class="thumb">${art(im.versions[im.ver - 1].art)}</span><div class="stack" style="gap:.4rem"><strong>${esc(im.title)}</strong>
+      ${cap ? `<p class="caption">${esc(cap)}</p>` : `<p class="state c-warn">${I.alert}<span>${esc(L(code))} caption missing</span></p>`}
+      ${canEdit() ? `<form class="stack" data-form="caption" data-cid="${c.id}" data-code="${code}" data-id="${im.id}" style="gap:.4rem" ${cap ? 'hidden' : ''} id="capf-${im.id}-${code}"><div class="field"><label for="cap-${im.id}-${code}">${esc(L(code))} caption <span class="hint">· write it in ${esc(L(code))} (${esc(LANGS[code].native)})</span></label><input type="text" id="cap-${im.id}-${code}" name="caption" value="${esc(cap || '')}" placeholder="${esc(L(code))}: what the photo shows" lang="${code}"><span class="hint">Shown under the photo in the ${esc(L(code))} release. The English caption is: “${esc(c.images.find(x => x.id === im.id).captions[c.source] || '–')}”</span></div><div class="row"><button class="btn primary" type="submit">Save caption</button></div></form>
+      ${cap ? `<span><button class="btn quiet" data-act="show-cap" data-target="capf-${im.id}-${code}">Edit caption</button></span>` : ''}` : ''}</div></div>`; }).join('');
+
+  const versions = ln.sent.slice().reverse().map(x => {
+    const appr = ln.approvals.filter(a => a.v === x.v);
+    const isCur = x === s, valid = ca && ca.v === x.v;
+    let status;
+    if (valid) status = pill('ok', 'check', `Approved by ${PEOPLE[ca.by].first}`);
+    else if (appr.some(a => a.withdrawn)) status = pill('mute', 'dot', 'Approval withdrawn');
+    else if (appr.length) status = pill('mute', 'dot', 'Approved, then replaced');
+    else if (isCur) status = pill('act', x.ins ? 'ins' : 'clock', x.ins ? 'INS suggestion' : 'Waiting');
+    else status = pill('mute', 'dot', 'Replaced');
+    return `<li><span class="vnum">v${x.v}</span><span><strong>${x.ins ? 'Suggested by INS' : 'Sent'}</strong> by ${esc(PEOPLE[x.by].name)} · ${esc(when(x.at))}${ln.live && ln.live.v === x.v ? ' · <strong>online</strong>' : ''}<br>${status}</span><button class="btn quiet" data-act="go" data-view="review" data-cid="${c.id}" data-code="${code}" data-v="${x.v}">View</button></li>`; }).join('');
+
+  return `<div class="wrap stack-lg">
+    <div class="stack" style="gap:.5rem"><button class="back" data-act="go" data-view="campaign" data-cid="${c.id}">← ${esc(c.name)}</button>
+      <span class="eyebrow">${isTr ? 'Translation' : 'Original language'} · ${esc(LANGS[code].native)}</span><h1>${esc(L(code))}</h1>
+      <div class="row">${pill(st.tone, st.icon, st.label)}${owners[st.owner] ? `<span class="small muted">Who acts: ${esc(owners[st.owner])}</span>` : ''}</div></div>
+    ${banner}
+    <div class="two"><div class="stack-lg">
+      <section aria-labelledby="h-text" class="stack"><h2 id="h-text">Text</h2>${textPart}</section>
+      <section aria-labelledby="h-ph" class="stack"><div class="section-head" style="margin:0"><h2 id="h-ph">Photos and captions</h2><span class="small muted">Photos are shared; captions are per language</span></div><div class="panel">${photos || '<p class="muted">No photos yet.</p>'}</div>${st.key === 'unsent' && canEdit() ? `<div class="banner act" id="next-after-photos"><strong>Everything ${esc(L(code))} needs is here.</strong><div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div></div>` : ''}</section>
+    </div>
+    <aside class="stack" aria-labelledby="h-ver"><h2 id="h-ver">Versions for approval</h2>
+      <p class="small muted">An approval covers one exact version: this text plus these photos and captions. Sending a newer version replaces it.</p>
+      ${ln.sent.length ? `<ul class="vlist">${versions}</ul>` : '<p class="muted">Nothing sent yet.</p>'}
+      ${ca && canApprove() ? `<button class="btn danger" data-act="withdraw" data-cid="${c.id}" data-code="${code}">Withdraw approval of version ${ca.v}</button>` : ''}
+    </aside></div>
+  </div>`;
+}
+function textForm(c, code) {
+  const ln = c.lang[code], t = ln.text || { headline: '', body: [] }, isTr = code !== c.source, outd = outdated(c, code);
+  const prepared = outd ? TEXT[code + '2'] : null;
+  return `<form class="stack panel" data-form="text" data-cid="${c.id}" data-code="${code}">
+    <div class="field"><label for="hl">Headline</label><input type="text" id="hl" name="headline" value="${esc(t.headline)}"></div>
+    <div class="field"><label for="bd">Body text</label><textarea id="bd" name="body">${esc(t.body.join('\n\n'))}</textarea><span class="hint">Leave an empty line between paragraphs. You can also <button type="button" class="link" data-act="todo" data-msg="Word import works today (.docx, .txt). Not wired up in this prototype.">import a Word file</button>.</span></div>
+    ${prepared ? `<p class="small"><button type="button" class="link" data-act="fill-prepared" data-code="${code}">Fill in the updated translation</button> <span class="tag">Simulation</span></p>` : ''}
+    <div class="row"><button class="btn primary" type="submit">Save</button><button class="btn quiet" type="button" data-act="cancel-edit">Cancel</button></div>
+    <p class="small muted">Saving keeps your changes here. To use them, send them for approval: that creates a new version, which an approver must approve.</p></form>`;
+}
+
+function viewReview(c, code, v) {
+  const ln = c.lang[code], x = ln.sent.find(s => s.v === +v), s = lastSent(ln), ca = currentApproval(ln);
+  const isLatest = x === s, approvedThis = ca && ca.v === x.v;
+  const prev = ln.approvals.filter(a => !a.withdrawn && a.v < x.v).at(-1);
+  const prevSnap = prev ? ln.sent.find(q => q.v === prev.v).snap : null;
+  const diffOn = S.showDiff && prevSnap;
+  const hl = diffOn ? wordDiff(prevSnap.headline, x.snap.headline) : esc(x.snap.headline);
+  const body = x.snap.body.map((p, i) => `<p>${diffOn ? wordDiff(prevSnap.body[i] || '', p) : esc(p)}</p>`).join('');
+  const changedPhotos = prevSnap ? x.snap.images.filter(im => { const o = prevSnap.images.find(q => q.id === im.id); return !o || o.ver !== im.ver || o.caption !== im.caption; }).map(im => im.id) : [];
+  const figs = x.snap.images.map(im => `<div class="figure"><span class="thumb">${art(im.art)}</span><div class="stack" style="gap:.3rem"><strong>${esc(im.title)}${diffOn && changedPhotos.includes(im.id) ? ` <span class="pill t-act" style="margin-left:.3rem">Changed</span>` : ''}</strong><p class="caption">${im.caption ? esc(im.caption) : '<em>No caption</em>'}</p></div></div>`).join('');
+  const src = c.lang[c.source], isTr = code !== c.source;
+  const others = c.langs.filter(k => k !== code);
+  const trImpact = !isTr ? c.langs.filter(k => k !== code && c.lang[k].text && wordingDiffers(c, c.lang[k].text.basedOn ?? 0, x.v)) : [];
+  const srcPending = isTr && isLatest && sourcePending(c, code);
+  const conseq = [
+    `Exactly this version goes to INS. Nothing else is included.`,
+    `INS publishes it by hand, ${c.confirmed ? `at ${longWhen(c.confirmed)}, never earlier` : `at the time INS confirms (you requested ${longWhen(c.requested)}), never earlier`}.`,
+    c.langs.length > 1 && c.mode === 'together' ? `All ${c.langs.length} languages launch together. ${L(code)} waits until ${others.map(L).join(' and ')} are approved too.` : null,
+    trImpact.length ? `<strong>${trImpact.map(L).join(' and ')} ${trImpact.length > 1 ? 'were' : 'was'} translated from an earlier English version.</strong> After you approve, ${trImpact.length > 1 ? 'they' : 'it'} must be updated and approved again before anything can be published.` : null,
+    `If anyone sends a newer ${L(code)} version, this approval stops counting and INS can’t publish ${L(code)} until the new one is approved.`,
+    ln.live ? `Version ${ln.live.v} stays online unchanged until INS publishes this one as an update.` : null,
+    `Your name, the time and the fingerprint <span class="fp">${x.fp}</span> are recorded.`
+  ].filter(Boolean);
+
+  let bar;
+  if (!isLatest) bar = `<span class="spacer">This version was replaced by version ${s.v}. It can no longer be approved.</span><button class="btn" data-act="go" data-view="review" data-cid="${c.id}" data-code="${code}" data-v="${s.v}">See version ${s.v}</button>`;
+  else if (approvedThis) bar = `<span class="spacer">${I.check.replace('<svg', '<svg width="16" height="16" style="vertical-align:-3px;color:var(--ok)"')} Approved by ${esc(PEOPLE[ca.by].name)} · ${esc(when(ca.at))}</span><button class="btn" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">Back to ${esc(L(code))}</button>`;
+  else if (canApprove()) bar = `<span class="spacer">You’re approving exactly what’s on this page.</span>
+      ${x.ins ? `<button class="btn quiet" data-act="decline" data-cid="${c.id}" data-code="${code}">Keep our wording</button><button class="btn" data-act="reply" data-cid="${c.id}">Reply to INS</button>` : `<button class="btn" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">Make changes first</button>`}
+      <button class="btn primary" data-act="approve" data-cid="${c.id}" data-code="${code}" data-v="${x.v}">Approve ${esc(L(code))} · version ${x.v}</button>`;
+  else bar = `<span class="spacer">Only approvers can approve: ${esc(approversText(true))}.${S.role === 'viewer' ? '' : ' You can still reply or make changes.'}</span>${S.role !== 'viewer' ? `<button class="btn" data-act="remind" data-cid="${c.id}">Remind the approvers</button>${build()}` : ''}`;
+
+  return `<div class="wrap stack-lg" style="padding-bottom:2rem">
+    <div class="stack" style="gap:.5rem"><button class="back" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">← ${esc(L(code))}</button>
+      <span class="eyebrow">${isLatest && !approvedThis ? 'Review before approving' : 'Version record'}</span>
+      <h1>${esc(L(code))} · version ${x.v}</h1>
+      <p class="muted">${x.ins ? `Suggested by ${esc(PEOPLE[x.by].name)}, INS` : `Sent by ${esc(PEOPLE[x.by].name)}`} · ${esc(longWhen(x.at))}</p></div>
+    ${x.ins ? `<div class="note-ins"><span class="eyebrow" style="color:var(--info)">Why INS suggests this</span><blockquote>${esc(x.note)}</blockquote><span class="small">${esc(PEOPLE[x.by].name)}, ${esc(PEOPLE[x.by].title)}. INS can only suggest. This wording is used only if an approver approves it.</span></div>` : ''}
+    ${srcPending && canApprove() && !approvedThis ? `<div class="banner warn"><strong>Decide on English first.</strong><p>This translation was made from English version ${x.snap.basedOn}. English version ${srcPending.v} has new wording waiting for a decision. If it’s approved, ${L(code)} must be updated and approved again, so decide on English first.</p><div><button class="btn" data-act="go" data-view="review" data-cid="${c.id}" data-code="${c.source}" data-v="${srcPending.v}">Go to English version ${srcPending.v}</button></div></div>` : ''}
+    ${x.ins && prev && isLatest ? `<div class="banner warn"><strong>Your approval of version ${prev.v} no longer counts.</strong><p>When INS sends a suggestion it becomes the newest version, so the earlier approval stops counting. To launch, approve this version or send your own. ${prule('R2')}</p></div>` : ''}
+    <div class="two">
+      <div class="stack">
+        ${prevSnap ? `<label class="toggle"><input type="checkbox" data-act="toggle-diff" ${S.showDiff ? 'checked' : ''}> Highlight changes since version ${prev.v}, which ${esc(PEOPLE[prev.by].first)} approved</label>` : `<p class="small muted">First version sent for approval in ${esc(L(code))}.</p>`}
+        ${diffOn ? `<p class="small muted"><ins>Added</ins> &nbsp; <del>Removed</del></p>` : ''}
+        <article class="article" aria-label="Your material in this version"><div class="hl">${hl}</div><div class="bd">${body}</div><div>${figs}</div>
+          ${x.snap.files.length ? `<p class="small">${I.doc.replace('<svg', '<svg width="16" height="16" style="vertical-align:-3px"')} Attachment: ${c.files.filter(f => x.snap.files.includes(f.id)).map(f => esc(f.title) + ' (' + esc(f.meta) + ')').join(', ')}</p>` : ''}</article>
+        <p class="small muted">INS never changes your wording on its own. ${x.ins ? 'When INS wants a change, it sends a suggestion like this one.' : 'If INS wants a change, it sends you a suggestion to approve.'}</p>
+      </div>
+      <aside class="stack">
+        <section class="panel stack" aria-labelledby="h-exact"><h2 id="h-exact" style="font-size:1.15rem">Exactly what you approve</h2>
+          <ul class="exact">
+            <li>${I.doc}<span>The ${esc(L(code))} headline and ${x.snap.body.length} paragraphs shown here${isTr ? ` (translated from English version ${x.snap.basedOn})` : ''}</span></li>
+            ${x.snap.images.map(im => `<li>${I.image}<span>Photo “${esc(im.title)}” (photo version ${im.ver}) with its ${esc(L(code))} caption</span></li>`).join('')}
+            ${c.files.filter(f => x.snap.files.includes(f.id)).map(f => `<li>${I.doc}<span>Attachment: ${esc(f.title)}</span></li>`).join('')}
+            <li>${I.lock}<span>This version can’t be edited. Any change becomes a new version that needs its own approval. Fingerprint <span class="fp">${x.fp}</span>: a code that identifies exactly this content.</span></li>
+          </ul></section>
+        <section class="panel stack" aria-labelledby="h-then"><h2 id="h-then" style="font-size:1.15rem">${approvedThis ? 'What approval meant' : 'What happens when you approve'}</h2><ul class="conseq">${conseq.map(t => `<li>${t}</li>`).join('')}</ul></section>
+      </aside>
+    </div>
+  </div>
+  <div class="review-bar"><div class="wrap">${(TST && TST.active) || !showControls() ? '' : `<button class="proto-btn inline" data-act="panel" aria-expanded="${S.panel}">Prototype controls</button>`}${bar}</div></div>`;
+}
+
+function viewRecord(c) {
+  const entries = c.log.filter(e => !e.internal).slice().reverse();
+  return `<div class="wrap stack-lg"><div class="stack" style="gap:.5rem"><button class="back" data-act="go" data-view="campaign" data-cid="${c.id}">← ${esc(c.name)}</button><h1>Approval record</h1>
+    <p class="muted" style="max-width:42rem">Everything that was sent, approved, replaced or published. Entries can’t be edited or deleted. A fingerprint identifies the exact text, photos and captions that were approved.</p></div>
+    <ol class="log">${entries.map(e => `<li><time class="tnum">${esc(when(e.at))}</time><span><strong>${esc(e.who)}</strong> · ${esc(e.text)}</span></li>`).join('')}</ol></div>`;
+}
+
+function newWiz() { return { step: 1, name: '', date: '2026-12-03', time: '09:00', source: 'en', extra: ['fi', 'sv'], mode: 'together' }; }
+function viewNew() {
+  if (!S.wiz) S.wiz = newWiz();
+  const w = S.wiz, langs = [w.source, ...w.extra.filter(x => x !== w.source)];
+  const head = `<button class="back" data-act="go" data-view="campaigns">← Cancel</button><span class="eyebrow">Start a campaign</span><h1>${w.step === 1 ? 'The basics' : w.step === 2 ? 'What INS will need from you' : 'Check and create'}</h1>
+    <ol class="wizard-steps" aria-label="Steps">${['Basics', 'What INS needs', 'Check and create'].map((t, i) => `<li ${w.step === i + 1 ? 'aria-current="step"' : ''}>${i + 1}. ${t}</li>`).join('')}</ol>`;
+  if (S.role === 'viewer') return `<div class="wrap stack-lg"><div class="stack">${head}</div><p class="empty">Viewers can’t start campaigns. Ask Maria Lind or Petra Koski.</p></div>`;
+  if (w.step === 1) return `<div class="wrap stack-lg" style="max-width:44rem"><div class="stack" style="gap:.6rem">${head}</div>
+    <form class="stack" data-form="wiz1" novalidate>
+      <div class="field"><label for="w-name">Campaign name</label><input type="text" id="w-name" name="name" value="${esc(w.name)}" placeholder="For example: Winter service offer" required><span class="hint">Only your team and INS see this name.</span><span class="hint c-act" id="w-name-err" hidden>Give the campaign a name.</span></div>
+      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.4rem"><legend style="font-weight:600;margin-bottom:.35rem">When would you like it published?</legend>
+        <div class="row" style="flex-wrap:nowrap"><div class="field" style="flex:1"><label for="w-date" class="hint">Date</label><input type="date" id="w-date" name="date" value="${esc(w.date)}"></div><div class="field" style="flex:1"><label for="w-time" class="hint">Time (Helsinki)</label><input type="time" id="w-time" name="time" value="${esc(w.time)}"></div></div>
+        <span class="hint">This is your request. INS confirms the time once everything is approved, and never publishes earlier than you asked.</span></fieldset>
+      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.5rem"><legend style="font-weight:600;margin-bottom:.35rem">Languages</legend>
+        <div class="field"><label for="w-src" class="hint">Original language (the one you write first)</label><select id="w-src" name="source">${Object.keys(LANGS).map(k => `<option value="${k}" ${k === w.source ? 'selected' : ''}>${LANGS[k].name}</option>`).join('')}</select></div>
+        <span class="hint">Translations (you supply them)</span><div class="chipsel">${Object.keys(LANGS).map(k => `<label><input type="checkbox" name="extra" value="${k}" ${w.extra.includes(k) ? 'checked' : ''}> ${LANGS[k].name}</label>`).join('')}</div></fieldset>
+      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.5rem"><legend style="font-weight:600;margin-bottom:.35rem">If you have more than one language</legend>
+        <label class="choice"><input type="radio" name="mode" value="together" ${w.mode === 'together' ? 'checked' : ''}><span><strong>Publish all languages together</strong><span class="hint">Recommended. Nothing goes out until every language is approved.</span></span></label>
+        <label class="choice"><input type="radio" name="mode" value="separately" ${w.mode === 'separately' ? 'checked' : ''}><span><strong>Publish each language when it’s ready</strong><span class="hint">A late translation won’t hold up the others.</span></span></label></fieldset>
+      <div class="row"><button class="btn primary" type="submit">Continue</button></div></form></div>`;
+  if (w.step === 2) return `<div class="wrap stack-lg" style="max-width:44rem"><div class="stack" style="gap:.6rem">${head}</div>
+    <p style="color:var(--ink-soft)">You don’t need everything now. The campaign page shows what’s still missing and who it’s waiting for.</p>
+    <section class="panel stack"><h2 style="font-size:1.15rem">For each language (${langs.map(L).join(', ')})</h2><ul class="checklist">
+      <li>${I.doc}<span><strong>Headline and text.</strong> Paste it or import a Word file.</span></li>
+      <li>${I.image}<span><strong>At least one photo, with a caption in each language.</strong> Photos are shared; captions are written per language.</span></li>
+      <li>${I.doc}<span><strong>Attachments</strong> (optional), such as a datasheet.</span></li></ul></section>
+    <section class="panel stack"><h2 style="font-size:1.15rem">Who approves</h2>
+      <p>Each language needs an approval from <strong>Maria Lind</strong> or <strong>Petra Koski</strong>. They’re the approvers at Norrvik Pumps.</p>
+      <p class="small muted">Jonas Berg can prepare material but can’t approve. To change who can approve, ask Petra Koski (admin). ${build()}</p>
+      <p class="small"><button class="link" data-act="todo" data-msg="Inviting a colleague to review isn’t built yet (planned batch E4/E5).">Invite a colleague to review</button> ${build()}</p></section>
+    <div class="row"><button class="btn primary" data-act="wiz" data-step="3">Continue</button><button class="btn quiet" data-act="wiz" data-step="1">Back</button></div></div>`;
+  const dt = D(`${w.date}T${w.time}`);
+  return `<div class="wrap stack-lg" style="max-width:44rem"><div class="stack" style="gap:.6rem">${head}</div>
+    <dl class="panel" style="display:grid;grid-template-columns:minmax(8rem,12rem) 1fr;gap:.6rem 1rem;margin:0">
+      <dt class="muted">Name</dt><dd style="margin:0"><strong>${esc(w.name)}</strong></dd>
+      <dt class="muted">Requested time</dt><dd style="margin:0">${esc(longWhen(dt))}</dd>
+      <dt class="muted">Languages</dt><dd style="margin:0">${langs.map((k, i) => L(k) + (i ? '' : ' (original)')).join(', ')}</dd>
+      <dt class="muted">Publishing</dt><dd style="margin:0">${langs.length > 1 ? (w.mode === 'together' ? 'All languages together' : 'Each language when ready') : 'One language'}</dd></dl>
+    <section class="stack"><h2 style="font-size:1.15rem">What happens next</h2>${stepsStrip({ langs: [], lang: {}, confirmed: null })}</section>
+    <div class="row"><button class="btn primary" data-act="wiz-create">Create campaign</button><button class="btn quiet" data-act="wiz" data-step="2">Back</button></div>
+    <p class="small muted">Creating the campaign tells no one outside your team. INS sees it, but nothing is published until it’s approved.</p></div>`;
+}
+
+function viewPanel() {
+  return `<aside class="proto" role="dialog" aria-label="Prototype controls" aria-modal="false">
+    <div class="row" style="justify-content:space-between"><h2>Prototype controls</h2><button class="btn" data-act="panel">Close</button></div>
+    <p class="small" style="color:var(--sim)">Simulation. Not part of the design.</p>
+    <div><h3>Who you are</h3><div class="opts">${Object.entries(ROLES).map(([k, r]) => `<button class="opt" data-act="role" data-role="${k}" aria-pressed="${S.role === k}"><strong>${r.label}</strong><small>${esc(r.desc)}</small></button>`).join('')}</div></div>
+    <div><h3>Jump to a situation</h3><div class="opts">${SCENARIOS.map(s => `<button class="opt" data-act="scenario" data-id="${s.id}" aria-pressed="${S.scenario === s.id}"><strong>${s.label}</strong><small>${esc(s.desc)}</small></button>`).join('')}</div></div>
+    <div><h3>Play INS (AquaLine X3)</h3><div class="opts">
+      <button class="opt" data-act="ins-propose"><strong>Send a suggestion</strong><small>INS proposes new English wording</small></button>
+      <button class="opt" data-act="ins-review"><strong>Do INS’s internal check</strong><small>Happens in the INS desk. The client never sees this step.</small></button>
+      <button class="opt" data-act="ins-confirm"><strong>Confirm the launch time</strong><small>Confirms the requested time</small></button>
+      <button class="opt" data-act="ins-publish"><strong>Publish</strong><small>Jumps the clock to the confirmed time if needed</small></button></div></div>
+    <div class="stack" style="gap:.5rem"><h3>Markers in the design</h3>
+      <button class="opt" data-act="markers" aria-pressed="${!S.markers}"><strong>${S.markers ? 'Hide markers' : 'Show markers'}</strong><small>Hide them while testing with first-time users</small></button>
+      <p class="small">${build()} The portal doesn’t have this yet.</p>
+      <p class="small">${prule('R1')} A change to today’s rules, approved 23 Oct 2026, not built yet:</p>
+      <ul class="small" style="margin:0;padding-left:1.1rem;display:grid;gap:.3rem">
+        <li><b>R1</b> Keep the client’s requested time separate from the time INS confirms. Today there is one field.</li>
+        <li><b>R2</b> An INS suggestion shouldn’t cancel an existing approval until the client decides. Today it does.</li>
+        <li><b>R3</b> The INS desk is invisible to clients: no INS drafts, previews, checks or problems. Clients see only their material, approvals, the launch time and publication. Today clients can read some of these.</li>
+        <li><b>R4</b> Let clients decline a suggestion with a reason, kept in the record.</li>
+        <li><b>R5</b> After launch, withdrawing an approval doesn’t take the release offline. Pair it with “Ask INS to take this offline”.</li></ul></div>
+    <div class="row"><button class="btn" data-act="scenario" data-id="${S.scenario}">Reset this situation</button><span class="small muted tnum">Clock: ${esc(when(S.now))}</span></div>
+  </aside>`;
+}
+function viewDialog() {
+  const d = S.dialog;
+  return `<div class="scrim" data-act="scrim"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-t"><h2 id="dlg-t">${d.title}</h2>${d.html}
+    ${d.choices ? `<div class="choices">${d.choices.map(ch => `<button class="choice-btn${ch.primary ? ' primary' : ''}" data-act="apply" ${Object.entries(ch.data).map(([k, v]) => `data-${k}="${esc(v)}"`).join(' ')}><strong>${esc(ch.label)}</strong><span>${esc(ch.hint)}</span></button>`).join('')}</div>` : ''}
+    ${d.actions ? `<div class="actions">${d.actions.map(a => `<button class="btn ${a.kind || ''}" data-act="${a.act}" ${Object.entries(a.data || {}).map(([k, v]) => `data-${k}="${esc(v)}"`).join(' ')}>${a.label}</button>`).join('')}</div>` : ''}</div></div>`;
+}
+
+/* ---------- Actions ---------- */
+let toastT;
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 4500); }
+const tick = () => { S.now = new Date(S.now.getTime() + 3 * 60000); return S.now; };
+function go(view, focusMain = true) { S.view = view; S.editing = null; render(); if (focusMain) { window.scrollTo(0, 0); document.getElementById('main')?.focus({ preventScroll: true }); } }
+
+function sendLang(c, code, by) {
+  const ln = c.lang[code], prevA = currentApproval(ln), s = lastSent(ln);
+  const e = sentEntry(c, code, ln.sent.length + 1, by || me(), tick(), false, ln.text);
+  ln.sent.push(e);
+  logAdd(c, e.at, PEOPLE[e.by].name, `Sent ${L(code)} version ${e.v} for approval${prevA ? `. The approval of version ${prevA.v} no longer counts` : s ? `. It replaces version ${s.v}` : ''}.`);
+  return e;
+}
+function applyPending(mode) {
+  const p = S.pending, c = camp(p.cid); S.dialog = null; S.pending = null;
+  if (p.type === 'text') { c.lang[p.code].text = p.text; }
+  if (p.type === 'caption') { c.images.find(i => i.id === p.id).captions[p.code] = p.caption; }
+  if (p.type === 'photo') {
+    const im = c.images.find(i => i.id === p.id); im.versions.push({ v: im.ver + 1, art: 'room', by: me(), at: tick() }); im.ver += 1; im.title = 'Pump installed in a plant room';
+    for (const k of c.langs) { const f = document.getElementById('rp-' + k); if (f) im.captions[k] = f.value.trim() || null; }
+    logAdd(c, S.now, PEOPLE[me()].name, `Replaced the photo (now photo version ${im.ver}) and its captions.`);
+  }
+  if (mode === 'send') {
+    const codes = p.type === 'photo' ? c.langs : [p.code];
+    const sent = [], held = [];
+    const sentCodes = [];
+    for (const code of codes) { if (c.lang[code].text && !missing(c, code).length) { sendLang(c, code); sent.push(L(code)); sentCodes.push(code); } else held.push(L(code)); }
+    if (held.length) toast(`${held.join(', ')} still need${held.length > 1 ? '' : 's'} material.`);
+    S.editing = null; afterSend(c, sentCodes); return;
+  } else {
+    if (p.type !== 'photo') logAdd(c, tick(), PEOPLE[me()].name, `Saved ${p.type === 'caption' ? 'a caption' : 'text'} changes in ${L(p.code)} (not sent)`);
+    toast('Saved. Not sent for approval, so the approved versions still count.');
+  }
+  S.editing = null; render();
+}
+// After sending: say who approves. An approver gets the approve step straight away, because sending alone approves nothing.
+function afterSend(c, codes) {
+  if (!codes.length) return render();
+  const names = codes.map(L).join(', ');
+  if (!canApprove()) { S.dialog = null; render(); toast(`Sent ${names} for approval. Waiting for ${approversText(true)}; INS doesn’t approve your material.`); return; }
+  const first = codes[0], v = lastSent(c.lang[first]).v;
+  S.dialog = { title: `Sent ${names} for approval`, html: `<p>Sending doesn’t approve anything. You’re an approver, so you can approve ${codes.length > 1 ? 'each language' : 'it'} now${codes.length > 1 ? ', one at a time' : ''}.</p>`,
+    actions: [{ label: 'Later', act: 'close', kind: 'quiet' }, { label: `Review and approve ${L(first)} · version ${v}`, act: 'go', kind: 'primary', data: { view: 'review', cid: c.id, code: first, v } }] };
+  render();
+}
+function changeDialog(c, codes, what, extra) {
+  // Explains the consequences before a change that touches sent or approved versions.
+  const lines = codes.map(code => {
+    const ln = c.lang[code], ca = currentApproval(ln), s = lastSent(ln);
+    if (!s) return null;
+    if (ca) return `<li><strong>${L(code)}:</strong> version ${ca.v} is approved. Sending makes version ${s.v + 1}, and the approval of version ${ca.v} stops counting.${ln.live ? ` Version ${ln.live.v} stays online until INS publishes the update.` : ''}</li>`;
+    return `<li><strong>${L(code)}:</strong> version ${s.v} is waiting for approval. Sending makes version ${s.v + 1}, which replaces it.</li>`;
+  }).filter(Boolean);
+  const together = c.langs.length > 1 && c.mode === 'together' && !c.langs.some(k => c.lang[k].live);
+  const deadline = c.confirmed && !c.langs.some(k => c.lang[k].live) ? ` before ${esc(longWhen(c.confirmed))}, or the launch moves` : '';
+  S.dialog = { title: 'Send this change for approval, or keep it as a draft?', html: `<p>${what}</p>
+    ${extra || ''}
+    <p class="small"><strong>Choose one:</strong></p>
+    <details class="small"><summary>What this changes for each language</summary><ul style="margin:.5rem 0 0;padding-left:1.2rem;display:grid;gap:.4rem">${lines.join('')}</ul>
+    ${together ? `<p style="margin-top:.5rem">All languages launch together, so the whole launch waits until the new version${codes.length > 1 ? 's are' : ' is'} approved.</p>` : ''}</details>`,
+    choices: [
+      { label: 'Send for approval', hint: `${approversText(true)} must approve the new version${codes.length > 1 ? 's' : ''}${deadline}. The current approval stops counting.`, data: { mode: 'send' }, primary: true },
+      { label: 'Keep it as a draft', hint: 'Nothing is sent. The approved version stays the one INS publishes. You can send the change later.', data: { mode: 'save' } }],
+    actions: [{ label: 'Cancel', act: 'close', kind: 'quiet' }] };
+}
+
+const ACT = {
+  go(d) {
+    S.dialog = null; S.pending = null;
+    if (d.view === 'new') { S.wiz = newWiz(); }
+    go({ name: d.view, cid: d.cid, code: d.code, v: d.v ? +d.v : undefined });
+    if (d.focus) { const f = document.getElementById(d.focus); if (f) { f.scrollIntoView({ block: 'center' }); f.focus({ preventScroll: true }); } }
+  },
+  'intro-off'() { S.intro = false; render(); },
+  markers() { S.markers = !S.markers; render(); },
+  panel() { if (!showControls()) return; S.panel = !S.panel; render(); if (S.panel) document.querySelector('.proto button')?.focus(); else document.querySelector('.proto-btn')?.focus(); },
+  role(d) { S.role = d.role; render(); toast(`You’re now ${PEOPLE[ROLES[d.role].user].name} (${ROLES[d.role].label.toLowerCase()}).`); },
+  scenario(d) { const keep = { role: S.role, intro: S.intro, markers: S.markers }; load(d.id, keep); S.panel = true; render(); toast('Situation loaded: ' + SCENARIOS.find(s => s.id === d.id).label); },
+  edit(d) { S.editing = { cid: d.cid, code: d.code }; render(); document.getElementById('hl')?.focus(); },
+  'cancel-edit'() { S.editing = null; render(); },
+  'fill-prepared'(d) { const t = TEXT[d.code + '2']; document.getElementById('hl').value = t.headline; document.getElementById('bd').value = t.body.join('\n\n'); },
+  'show-cap'(d) { const f = document.getElementById(d.target); f.hidden = false; f.querySelector('input').focus(); },
+  send(d) {
+    const c = camp(d.cid), code = d.code, ln = c.lang[code];
+    if (missing(c, code).length) return toast('Add the missing material first.');
+    const ca = currentApproval(ln);
+    if (ca) { S.pending = { type: 'noop', cid: c.id, code }; S.dialog = null; changeDialog(c, [code], 'You’re sending your latest changes.'); S.dialog.choices = null; S.dialog.actions = [{ label: 'Cancel', act: 'close', kind: 'quiet' }, { label: 'Send for approval', act: 'apply', kind: 'primary', data: { mode: 'send' } }]; return render(); }
+    const e = sendLang(c, code); afterSend(c, [code]);
+  },
+  approve(d) {
+    const c = camp(d.cid), code = d.code, ln = c.lang[code], s = lastSent(ln);
+    if (!canApprove() || s.v !== +d.v) return;
+    const a = { v: s.v, by: me(), at: tick(), fp: s.fp }; ln.approvals.push(a);
+    logAdd(c, a.at, PEOPLE[me()].name, `Approved ${L(code)} version ${s.v}${s.ins ? ' (INS suggestion)' : ''} · fingerprint ${s.fp}`);
+    const affected = code === c.source ? c.langs.filter(k => k !== code && outdated(c, k)) : [];
+    S.dialog = { title: `Approved: ${L(code)} · version ${s.v}`, html: `<p>Recorded ${esc(longWhen(a.at))} by ${esc(PEOPLE[me()].name)}.<br><span class="fp">Fingerprint ${s.fp}</span></p>
+      <p><strong>Next:</strong> this version is now with INS. ${c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}` : 'INS will confirm the launch time'}.${c.mode === 'together' && c.langs.length > 1 ? ' All languages launch together.' : ''}</p>
+      ${affected.length ? `<div class="banner warn"><strong>${affected.map(L).join(' and ')} now need${affected.length > 1 ? '' : 's'} updating.</strong><p>They were translated from an older English version. Your team will see this as a to-do.</p></div>` : ''}
+      <p class="small muted">Changed your mind? You can withdraw the approval on the ${esc(L(code))} page.</p>`,
+      actions: [{ label: 'Back to the campaign', act: 'close-go', kind: 'primary', data: { cid: c.id } }] };
+    render();
+  },
+  'close-go'(d) { S.dialog = null; go({ name: 'campaign', cid: d.cid }); },
+  close() { S.dialog = null; S.pending = null; render(); },
+  scrim(d, el, e) { if (e.target === el && !el.querySelector('input, textarea')) ACT.close(); },
+  apply(d) { if (S.pending.type === 'noop') { const c = camp(S.pending.cid), code = S.pending.code; S.dialog = null; S.pending = null; sendLang(c, code); afterSend(c, [code]); return render(); } applyPending(d.mode); },
+  withdraw(d) {
+    const c = camp(d.cid), code = d.code, ln = c.lang[code], ca = currentApproval(ln);
+    S.pending = { cid: c.id, code };
+    S.dialog = { title: `Withdraw approval of ${L(code)} version ${ca.v}?`, html: `<p>INS can’t publish ${L(code)} until an approver approves again.${c.mode === 'together' && c.langs.length > 1 && !ln.live ? ' Because all languages launch together, the whole launch waits.' : ''}</p>
+      ${ln.live ? `<div class="banner warn"><strong>This doesn’t take the published release offline.</strong><p>Version ${ln.live.v} stays online. To take it down, write to INS. ${prule('R5')}</p></div>` : ''}
+      <div class="field"><label for="w-reason">Reason (kept in the record)</label><input type="text" id="w-reason" placeholder="For example: the price in paragraph 3 is wrong"></div>`,
+      actions: [{ label: 'Cancel', act: 'close', kind: 'quiet' }, { label: 'Withdraw approval', act: 'do-withdraw', kind: 'danger' }] };
+    render(); document.getElementById('w-reason')?.focus();
+  },
+  'do-withdraw'() {
+    const r = document.getElementById('w-reason').value.trim();
+    if (!r) { document.getElementById('w-reason').setAttribute('aria-invalid', 'true'); return toast('Add a reason. It’s kept in the record.'); }
+    const c = camp(S.pending.cid), code = S.pending.code, ca = currentApproval(c.lang[code]);
+    ca.withdrawn = { by: me(), at: tick(), reason: r };
+    logAdd(c, S.now, PEOPLE[me()].name, `Withdrew the approval of ${L(code)} version ${ca.v}: “${r}”`);
+    S.dialog = null; S.pending = null; render(); toast('Approval withdrawn. INS has been told.');
+  },
+  'change-time'(d) {
+    const c = camp(d.cid); S.pending = { cid: c.id };
+    S.dialog = { title: 'Change the requested time', html: `<p>Changing the time doesn’t affect any approvals. INS confirms the new time again. ${prule('R1')}</p>
+      <div class="row" style="flex-wrap:nowrap"><div class="field" style="flex:1"><label for="ct-d">Date</label><input type="date" id="ct-d" value="2026-11-19"></div><div class="field" style="flex:1"><label for="ct-t">Time (Helsinki)</label><input type="time" id="ct-t" value="09:00"></div></div>`,
+      actions: [{ label: 'Cancel', act: 'close', kind: 'quiet' }, { label: 'Save new time', act: 'do-time', kind: 'primary' }] };
+    render();
+  },
+  'do-time'() {
+    const c = camp(S.pending.cid), dt = D(`${document.getElementById('ct-d').value}T${document.getElementById('ct-t').value}`);
+    c.requested = dt; c.confirmed = null; logAdd(c, tick(), PEOPLE[me()].name, `Requested a new launch time: ${longWhen(dt)}`);
+    S.dialog = null; S.pending = null; render(); toast('New time requested. INS will confirm it.');
+  },
+  'replace-photo'(d) {
+    const c = camp(d.cid), im = c.images.find(i => i.id === d.id);
+    S.pending = { type: 'photo', cid: c.id, id: im.id };
+    const touched = c.langs.filter(k => lastSent(c.lang[k]));
+    if (!touched.length) { applyPending('save'); return; }
+    changeDialog(c, touched, `You’re replacing “${esc(im.title)}” with a new photo <span class="tag">Simulated: a plant-room photo</span>. The photo is shared, so this affects every language.`,
+      `<div class="dropzone"><strong>plant-room.jpg</strong> <span class="tag">Simulated upload</span><span class="hint">In the portal you drag the new photo here, or choose a file.</span></div>
+      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.6rem"><legend style="font-weight:600;margin-bottom:.3rem">Captions for the new photo</legend><span class="hint">Each caption is part of what approvers approve. Check that it describes the new photo. Leave a language empty if a colleague will write it: it becomes their to-do.</span>
+      ${c.langs.map(k => `<div class="field"><label for="rp-${k}">${L(k)}</label><input type="text" id="rp-${k}" value="${esc(im.ver > 1 ? (im.captions[k] || '') : (PHOTO2[k] || ''))}"></div>`).join('')}</fieldset>`);
+    render();
+  },
+  'add-photo'(d) {
+    const c = camp(d.cid), id = 'p' + (c.images.length + 1);
+    c.images.push({ id, title: 'New photo ' + (c.images.length + 1), ver: 1, versions: [{ v: 1, art: 'room', by: me(), at: tick() }], captions: {} });
+    logAdd(c, S.now, PEOPLE[me()].name, 'Added a photo (simulated upload)'); render(); toast('Photo added (simulated). Add a caption in each language.');
+  },
+  'remove-photo'(d) {
+    const c = camp(d.cid), im = c.images.find(i => i.id === d.id);
+    if (!im || photoSent(c, im.id)) return;
+    c.images = c.images.filter(i => i.id !== im.id);
+    logAdd(c, tick(), PEOPLE[me()].name, `Removed the photo “${im.title}” (it was never sent for approval)`);
+    render(); toast(`Removed “${im.title}”. It was never sent, so no approval is affected.`);
+  },
+  decline(d) {
+    S.dialog = { title: 'Keep your own wording', html: `<p>Edit the text the way you want it and send it for approval. Your version replaces INS’s suggestion, and INS sees it. It helps to tell INS why in the conversation.</p><p class="small muted">${prule('R4')} ${build()} A one-click “Decline, with reason” that is kept in the record would be simpler.</p>`,
+      actions: [{ label: 'Close', act: 'close', kind: 'quiet' }, { label: 'Edit and send my own version', act: 'own-version', data: { cid: d.cid, code: d.code } }, { label: 'Reply to INS', act: 'reply', kind: 'primary', data: { cid: d.cid } }] };
+    render();
+  },
+  'own-version'(d) { S.dialog = null; S.view = { name: 'lang', cid: d.cid, code: d.code }; S.editing = { cid: d.cid, code: d.code }; render(); window.scrollTo(0, 0); document.getElementById('hl')?.focus(); },
+  reply(d) { S.dialog = null; go({ name: 'campaign', cid: d.cid }, false); const t = document.getElementById('msg-' + d.cid); t?.scrollIntoView({ block: 'center' }); t?.focus(); },
+  remind() { toast('Reminders aren’t built yet. In the real portal this would notify Maria Lind and Petra Koski.'); },
+  todo(d) { toast(d.msg); },
+  'toggle-diff'() { S.showDiff = !S.showDiff; render(); },
+  wiz(d) { S.wiz.step = +d.step; render(); window.scrollTo(0, 0); },
+  'wiz-create'() {
+    const w = S.wiz, langs = [w.source, ...w.extra.filter(x => x !== w.source)], id = 'c' + Date.now();
+    const c = { id, name: w.name, source: w.source, langs, mode: w.mode, requested: D(`${w.date}T${w.time}`), confirmed: null, created: S.now, images: [], files: [], lang: Object.fromEntries(langs.map(k => [k, emptyLang()])), messages: [], log: [], preparer: me() };
+    logAdd(c, tick(), PEOPLE[me()].name, 'Created the campaign');
+    S.campaigns.unshift(c); S.wiz = null; go({ name: 'campaign', cid: id }); toast('Campaign created. Start with the ' + L(w.source) + ' text.');
+  },
+  'ins-propose'() {
+    const c = camp('x3'), en = c.lang.en, s = lastSent(en);
+    const base = en.text;
+    en.text = { headline: base.headline.includes('up to 30 percent') ? base.headline.replace('cuts', 'reduces') : 'AquaLine X3 cuts circulation pump energy use by up to 30 percent', body: base.body.slice(), basedOn: null };
+    if (!base.headline.includes('up to 30 percent')) en.text.body = TEXT.en2.body.slice();
+    const prevA = currentApproval(en);
+    const e = sentEntry(c, 'en', en.sent.length + 1, 'anna', tick(), true, en.text, INS_NOTE); en.sent.push(e);
+    logAdd(c, e.at, 'Anna Virtanen, INS', `Suggested changes to English (version ${e.v}).${prevA ? ` The approval of version ${prevA.v} no longer counts.` : ''}`);
+    c.messages.push({ who: 'anna', at: S.now, text: `I’ve sent a suggested change to the English text (version ${e.v}). The reason is in the suggestion.` });
+    render(); toast('Simulated: INS sent English version ' + e.v + ' as a suggestion.');
+  },
+  'ins-review'() {
+    const c = camp('x3'); const done = [];
+    for (const code of c.langs) { const ln = c.lang[code], ca = currentApproval(ln); if (ca && ln.review !== ca.v && !outdated(c, code)) { ln.review = ca.v; done.push(`${L(code)} ${ca.v}`); } }
+    if (!done.length) return toast('Simulated: nothing approved is waiting for INS to check.');
+    logAdd(c, tick(), 'INS', 'Checked ' + done.join(', '), true); render(); toast('Simulated: INS checked ' + done.join(', ') + ' internally. The client sees no change.');
+  },
+  'ins-confirm'() { const c = camp('x3'); c.confirmed = c.requested; logAdd(c, tick(), 'INS', 'Confirmed the launch time: ' + longWhen(c.confirmed)); render(); toast('Simulated: INS confirmed ' + when(c.confirmed) + '.'); },
+  'ins-publish'() {
+    const c = camp('x3'), sts = c.langs.map(code => [code, langState(c, code)]);
+    const anyLive = c.langs.some(k => c.lang[k].live);
+    const blockers = sts.filter(([, s]) => s.key !== 'ready' && s.key !== 'live').map(([k, s]) => `${L(k)}: ${s.key === 'checking' ? 'INS’s internal check isn’t done' : s.label}`);
+    if (!c.confirmed && !anyLive) blockers.push('the launch time isn’t confirmed');
+    if (!anyLive && c.mode === 'together' && blockers.length) return toast('Simulated: INS can’t publish yet. ' + blockers.join('; ') + '.');
+    const ready = sts.filter(([, s]) => s.key === 'ready').map(([k]) => k);
+    if (!ready.length) return toast('Simulated: nothing new is ready to publish. ' + blockers.join('; '));
+    if (!anyLive && S.now < c.confirmed) S.now = new Date(c.confirmed.getTime() + 2 * 60000);
+    for (const k of ready) { const ln = c.lang[k]; ln.live = { v: currentApproval(ln).v, at: tick() }; }
+    logAdd(c, S.now, 'INS', `Published ${ready.map(L).join(', ')}${anyLive ? ' as an update' : ''}`);
+    render(); toast(`Simulated: INS published ${ready.map(L).join(', ')}.`);
+  }
+};
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const fn = ACT[el.dataset.act]; if (!fn) return;
+  logTestEvent(el);
+  if (el.tagName !== 'INPUT' && el.dataset.act !== 'scrim') e.preventDefault();
+  fn(el.dataset, el, e);
+});
+document.addEventListener('submit', e => {
+  const f = e.target; e.preventDefault(); const d = f.dataset, fd = new FormData(f);
+  if (d.form === 'msg') {
+    const text = (fd.get('text') || '').trim(); if (!text) return toast('Write a message first.');
+    const c = camp(d.cid); c.messages.push({ who: me(), at: tick(), text }); render(); toast('Message sent to INS.');
+    document.getElementById('msg-' + d.cid)?.focus();
+  }
+  if (d.form === 'caption') {
+    const c = camp(d.cid), code = d.code, cap = (fd.get('caption') || '').trim();
+    if (!cap) return toast('Write a caption first.');
+    if (lastSent(c.lang[code])) { S.pending = { type: 'caption', cid: c.id, code, id: d.id, caption: cap }; changeDialog(c, [code], `You’re changing the ${L(code)} caption. The caption is part of the approved version.`); return render(); }
+    c.images.find(i => i.id === d.id).captions[code] = cap; logAdd(c, tick(), PEOPLE[me()].name, `Added the ${L(code)} caption for “${c.images.find(i => i.id === d.id).title}”`);
+    render(); toast(`Caption saved.${missing(c, code).length ? '' : ` ${L(code)} is ready to send for approval.`}`);
+    // Keep the saved caption in view and put the next step right below it
+    const saved = document.getElementById('cap-' + d.id + '-' + code)?.closest('.figure') || document.querySelector('#h-ph');
+    saved?.scrollIntoView({ block: 'center' });
+    const next = document.querySelector('#next-after-photos [data-act="send"]'); next?.focus({ preventScroll: true });
+  }
+  if (d.form === 'text') {
+    const c = camp(d.cid), code = d.code, ln = c.lang[code];
+    const text = { headline: (fd.get('headline') || '').trim(), body: String(fd.get('body') || '').split(/\n\s*\n/).map(s => s.trim()).filter(Boolean), basedOn: code === c.source ? null : (sourceApprovedV(c) || lastSent(c.lang[c.source])?.v || 1) };
+    if (!text.headline) return toast('Add a headline.');
+    if (code !== c.source && ln.text && !outdated(c, code)) text.basedOn = ln.text.basedOn;
+    if (lastSent(ln)) { S.pending = { type: 'text', cid: c.id, code, text }; changeDialog(c, [code], `You’re changing the ${L(code)} text.`); return render(); }
+    ln.text = text; S.editing = null; logAdd(c, tick(), PEOPLE[me()].name, `Saved the ${L(code)} text (not sent)`); render(); toast('Text saved.');
+  }
+  if (d.form === 'wiz1') {
+    const name = (fd.get('name') || '').trim();
+    if (!name) { const err = document.getElementById('w-name-err'); err.hidden = false; document.getElementById('w-name').setAttribute('aria-invalid', 'true'); document.getElementById('w-name').focus(); return; }
+    Object.assign(S.wiz, { name, date: fd.get('date'), time: fd.get('time'), source: fd.get('source'), extra: fd.getAll('extra'), mode: fd.get('mode'), step: 2 });
+    render(); window.scrollTo(0, 0);
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id !== 'as-role') return;
+  const role = e.target.value; if (!ROLES[role]) return;
+  S.role = role; S.dialog = null; S.pending = null; S.editing = null;
+  if (TST && TST.active && TST.step === 'task' && TST.cur && TST.cur.events.length < 300)
+    TST.cur.events.push({ t: Math.round((Date.now() - TST.cur.t0) / 1000), act: 'view-as', view: S.view.name, code: S.view.code || '', label: 'View as ' + ROLES[role].label });
+  render(); document.getElementById('as-role')?.focus();
+  toast(`You’re now viewing as ${PEOPLE[ROLES[role].user].name} (${ROLES[role].label}).`);
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Tab' && S.dialog) {
+    const f = [...document.querySelectorAll('.dialog input, .dialog button, .dialog textarea')]; if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f.at(-1).focus(); }
+    else if (!e.shiftKey && document.activeElement === f.at(-1)) { e.preventDefault(); f[0].focus(); }
+    return;
+  }
+  if (e.key !== 'Escape') return;
+  if (S.dialog) { ACT.close(); } else if (S.panel) { S.panel = false; render(); document.querySelector('.proto-btn')?.focus(); }
+});
+// Every action re-renders, so put keyboard focus back on the equivalent control.
+const _render = render;
+render = function () {
+  const a = document.activeElement, key = a && a.dataset && a.dataset.act ? JSON.stringify(a.dataset) : null, hadDialog = !!document.querySelector('.dialog');
+  _render();
+  document.body.classList.toggle('no-markers', !S.markers);
+  const hdr = document.querySelector('.top'); if (hdr) document.documentElement.style.setProperty('--toph', hdr.offsetHeight + 'px');
+  if (S.dialog) { if (!hadDialog) { S.returnKey = key; document.querySelector('.dialog input, .dialog .choice-btn, .dialog .actions .btn.primary, .dialog .actions .btn')?.focus(); } return; }
+  if (hadDialog && S.returnKey) { const m = [...document.querySelectorAll('[data-act]')].find(el => JSON.stringify(el.dataset) === S.returnKey); S.returnKey = null; if (m) { m.focus({ preventScroll: true }); return; } }
+  if (key) { const m = [...document.querySelectorAll('[data-act]')].find(el => JSON.stringify(el.dataset) === key); m?.focus({ preventScroll: true }); }
+};
+
+
+/* ---------- Self-test mode: a first-time user does five tasks alone; answers are saved for INS ----------
+   Results go to the artifact's database (testruns/<viewer id>) when the viewer may write, and can always be
+   copied as text at the end. Nothing else in the prototype changes. */
+const TEST_TASKS = [
+  { id: 't1', scenario: 'today', role: 'admin',
+    text: 'You’re the client admin at Norrvik Pumps and you’ve just logged in. INS has changed your English headline. Decide whether you accept the change, and find out why INS changed it.',
+    questions: ['What did you decide, and why?', 'Why did INS change the headline?', 'What does your decision mean for the Finnish and Swedish versions?', 'Was anything published when you clicked?'] },
+  { id: 't2', scenario: null, role: 'admin',
+    text: 'Now get the Swedish version ready and approved.',
+    questions: ['What did you do?', 'What else needs you, and is anyone else involved (a colleague, or INS)?'] },
+  { id: 't3', scenario: null, role: 'admin',
+    text: 'Make sure the Finnish version is approved.',
+    questions: ['In your own words: what exactly did you approve?', 'What happens next, and who does it?', 'If a colleague edits the Finnish text tomorrow, does your approval still count?'] },
+  { id: 't4', scenario: 'ready', role: 'admin',
+    text: 'Two weeks later: all three languages are approved and INS has confirmed the launch time. A customer has sent a much better product photo. Replace the test-rig photo with it.',
+    questions: ['What happens to the launch now?', 'What were your choices when you saved the new photo, and what would the other choice have done?'] },
+  { id: 't5', scenario: null, role: 'admin',
+    text: 'Your CEO asks: what is ready to launch, who are we waiting for, and when will the release actually be published? Find out.',
+    questions: ['What is ready, and what isn’t?', 'Who are you waiting for?', 'What date and time would you tell your CEO?'] }
+];
+const FINAL_RATINGS = ['I always knew what I had to do next.', 'I knew exactly what I was approving.', 'I’d trust this with a real launch.'];
+let TST = null;
+// Prototype controls (switch person, play INS, jump to situations) are for the owner only. Testers see just the client
+// portal. Opened as a local file (no claude.ai viewer), the controls stay available for development.
+let IS_OWNER = null;
+const showControls = () => false;
+const PUBLIC_FORM = {"action": "https://docs.google.com/forms/d/e/PLACEHOLDER/formResponse", "run": "entry.1", "tester": "entry.2", "step": "entry.3", "answers": "entry.4"};
+const ANSWERS_TO = "axel.idstrom@ins.fi";
+(async () => {
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const u = await window.claude.use('user');
+    if (!u) { IS_OWNER = false; render(); return; }
+    const r = u.isOwner(); IS_OWNER = (r && typeof r.then === 'function') ? !!(await r) : !!r;
+  } catch (e) { IS_OWNER = false; }
+  if (!showControls()) S.panel = false;
+  render();
+})();
+const TKEY = 'ins-portal-selftest';
+const saveLocal = () => { try { localStorage.setItem(TKEY, JSON.stringify(TST)); } catch (e) {} };
+const loadLocal = () => { try { const x = JSON.parse(localStorage.getItem(TKEY) || 'null'); return x && x.active ? x : null; } catch (e) { return null; } };
+
+// The database and the viewer's id, when this view may use them (null otherwise; the copy fallback still works).
+const STORE = (async () => {
+  try {
+    if (!window.claude || !window.claude.use) return null;
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) return null;
+    return { db, id: await user.id() };
+  } catch (e) { return null; }
+})();
+async function saveRun() {
+  if (!TST.runId) TST.runId = new Date().toISOString().slice(0, 10) + '-' + Math.random().toString(36).slice(2, 8);
+  const done = TST.tasks.filter(Boolean).length;
+  const step = TST.step === 'done' ? 'finished' : TST.step === 'intro' ? 'opened the test' : `after task ${done}`;
+  const f = PUBLIC_FORM, body = new URLSearchParams();
+  body.set(f.run, TST.runId); body.set(f.tester, TST.name || '(no name yet)'); body.set(f.step, step); body.set(f.answers, resultText());
+  try { await fetch(f.action, { method: 'POST', mode: 'no-cors', body }); TST.saved = 'db'; }
+  catch (e) { TST.saved = 'copy'; }
+  saveLocal();
+}
+
+function testSnapshot() {
+  const c = camp('x3');
+  return { view: S.view.name, code: S.view.code || null, role: S.role,
+    langs: Object.fromEntries(c.langs.map(k => [k, { state: langState(c, k).key, versions: c.lang[k].sent.length,
+      approved: currentApproval(c.lang[k])?.v ?? null, live: !!c.lang[k].live }])),
+    photos: c.images.map(i => i.title + ' v' + i.ver), messages: c.messages.length };
+}
+function logTestEvent(el) {
+  if (!TST || !TST.active || TST.step !== 'task' || !TST.cur || el.dataset.act.startsWith('test-') || el.dataset.act === 'scrim') return;
+  if (TST.cur.events.length >= 300) return;
+  TST.cur.events.push({ t: Math.round((Date.now() - TST.cur.t0) / 1000), act: el.dataset.act, view: S.view.name,
+    code: S.view.code || '', label: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 50) });
+}
+const SKEY = 'ins-portal-selftest-state';
+const ISO = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z$/;
+const loadState = i => { try { const x = JSON.parse(localStorage.getItem(SKEY) || 'null', (k, v) => typeof v === 'string' && ISO.test(v) ? new Date(v) : v); return x && x.idx === i ? x.S : null; } catch (e) { return null; } };
+const renderPortal = render;
+render = function () {
+  renderPortal();
+  if (TST && TST.active && TST.step === 'task') try { localStorage.setItem(SKEY, JSON.stringify({ idx: TST.idx, S: { ...S, dialog: null, pending: null } })); } catch (e) {}
+};
+function startTask(i, resume) {
+  const task = TEST_TASKS[i];
+  const saved = resume ? loadState(i) : null;
+  const nm = (TST.name || '').trim();
+  PEOPLE.tester.name = nm || 'You'; PEOPLE.tester.first = nm ? nm.split(/\s+/)[0] : 'there';
+  // Tasks continue from the previous task's state unless they start a new situation.
+  if (saved) S = saved;
+  else if (task.scenario || !S) load(task.scenario || 'today', { role: task.role, intro: false, markers: false });
+  else { S.role = task.role; S.view = { name: 'home' }; S.dialog = null; S.pending = null; S.editing = null; S.intro = false; S.markers = false; }
+  S.panel = false;
+  TST.idx = i; TST.step = 'task';
+  if (!(saved && TST.cur && TST.cur.id === task.id)) TST.cur = { id: task.id, t0: Date.now(), startedAt: new Date().toISOString(), events: [] };
+  saveLocal(); render(); window.scrollTo(0, 0); document.getElementById('main')?.focus({ preventScroll: true });
+}
+function testBar() {
+  const task = TEST_TASKS[TST.idx];
+  return `<div class="testbar" role="region" aria-label="Your task"><div class="wrap">
+    <p class="tb-text"><b>Task ${TST.idx + 1} of ${TEST_TASKS.length}</b>${esc(task.text)}</p>
+    <div class="row"><button class="btn primary" data-act="test-finish" data-outcome="done">I’m done</button><button class="btn" data-act="test-finish" data-outcome="stuck">I’m stuck, skip</button></div>
+  </div></div>`;
+}
+const scale = (name, lo, hi) => `<div class="scale" role="radiogroup" aria-label="${esc(lo)} to ${esc(hi)}">${[1, 2, 3, 4, 5].map(n => `<label><input type="radio" name="${name}" value="${n}"> ${n}</label>`).join('')}</div><p class="hint">1 = ${esc(lo)}, 5 = ${esc(hi)}</p>`;
+function viewTest() {
+  const head = `<header class="top"><div class="wrap"><span class="logo"><b>/ins</b><span>Client portal · user test</span></span></div></header>`;
+  if (TST.step === 'intro') return head + `<main id="main" tabindex="-1"><div class="wrap stack-lg tscreen" style="padding-block:2rem 4rem">
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">User test · about 45 minutes</span><h1>Welcome, and thanks for helping</h1></div>
+    <p>You’ll try the new INS client portal as a client who has never used it. You are the <strong>client admin at Norrvik Pumps Oy</strong>: you prepare the material, approve it, and look after your company’s use of the portal. Norrvik is launching the AquaLine X3 pump through INS, in English, Finnish and Swedish. Your colleagues also use the portal. Use <strong>View as</strong> at the top right to see it from their side: Maria Lind (approver), Jonas Berg (contributor) and Eero Salo (viewer), then switch back to yourself. The company, the people and the material are fictional, and nothing you do is sent or published.</p>
+    <div class="panel stack"><h2 style="font-size:1.15rem">How it works</h2><ul style="margin:0;padding-left:1.2rem;display:grid;gap:.4rem">
+      <li>You get <strong>five tasks</strong>, one at a time. Each task stays at the top of the screen while you work.</li>
+      <li>Work it out yourself, as a real client would. There are no wrong answers: if something is unclear, that is what we need to find.</li>
+      <li>When you think you’ve finished a task, click <strong>I’m done</strong>. If you’re stuck for a few minutes, click <strong>I’m stuck, skip</strong>. Both are fine.</li>
+      <li>After each task you answer a few short questions. At the end there are three ratings.</li>
+      <li>If you’re recording yourself, <strong>think aloud</strong>: say what you look for and what surprises you.</li>
+      <li>Your answers are saved for Axel at INS as you go.</li></ul></div>
+    ${TST.saved === 'db' ? `<div class="banner ok"><strong>Ready.</strong><p>Your answers are sent to Axel automatically after every task. You don’t need to send anything.</p></div>`
+      : TST.saved === 'copy' ? `<div class="banner warn"><strong>Your answers can’t be sent automatically right now.</strong><p>Check your internet connection and reload this page. If this message stays, you can still do the test: at the end, use <strong>Email my answers</strong>.</p></div>`
+      : `<div class="banner"><strong>Checking that your answers can be saved…</strong></div>`}
+    <form class="stack" data-form="test-start"><div class="field"><label for="t-name">Your name</label><input type="text" id="t-name" name="name" value="${esc(TST.name || '')}" autocomplete="name"></div>
+    <div class="row"><button class="btn primary" type="submit">Start task 1</button><button class="btn quiet" type="button" data-act="test-quit">Not now</button></div></form></div></main>`;
+  if (TST.step === 'post') {
+    const task = TEST_TASKS[TST.idx];
+    return head + `<main id="main" tabindex="-1"><div class="wrap stack-lg tscreen" style="padding-block:2rem 4rem">
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">Task ${TST.idx + 1} of ${TEST_TASKS.length} · a few questions</span><h1>${TST.cur.outcome === 'stuck' ? 'Thanks. Being stuck is useful to know.' : 'Thanks. Now in your own words'}</h1></div>
+    <div class="task-card">${esc(task.text)}</div>
+    <form class="stack" data-form="test-post">
+      ${task.questions.map((q, i) => `<div class="field"><label for="q${i}">${esc(q)}</label><textarea id="q${i}" name="q${i}" style="min-height:4.5rem;font-family:var(--sans);font-size:1rem"></textarea></div>`).join('')}
+      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.4rem"><legend style="font-weight:600;margin-bottom:.35rem">How easy was this task?</legend>${scale('ease', 'very hard', 'very easy')}</fieldset>
+      <div class="field"><label for="qx">Anything that confused you? <span class="hint">Optional: words, buttons, where you looked first</span></label><textarea id="qx" name="confusing" style="min-height:4rem;font-family:var(--sans);font-size:1rem"></textarea></div>
+      <div><button class="btn primary" type="submit">${TST.idx + 1 < TEST_TASKS.length ? `Continue to task ${TST.idx + 2}` : 'Continue to the last questions'}</button></div>
+    </form></div></main>`;
+  }
+  if (TST.step === 'final') return head + `<main id="main" tabindex="-1"><div class="wrap stack-lg tscreen" style="padding-block:2rem 4rem">
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">Last step</span><h1>Three ratings and your thoughts</h1></div>
+    <form class="stack-lg" data-form="test-final">
+      ${FINAL_RATINGS.map((r, i) => `<fieldset class="stack" style="border:0;padding:0;margin:0;gap:.4rem"><legend style="font-weight:600;margin-bottom:.35rem">${esc(r)}</legend>${scale('r' + i, 'strongly disagree', 'strongly agree')}</fieldset>`).join('')}
+      <div class="field"><label for="fw">Which words or labels confused you?</label><textarea id="fw" name="words" style="min-height:4rem;font-family:var(--sans);font-size:1rem"></textarea></div>
+      <div class="field"><label for="fo">Anything else? What would you change first?</label><textarea id="fo" name="other" style="min-height:5rem;font-family:var(--sans);font-size:1rem"></textarea></div>
+      <div><button class="btn primary" type="submit">Finish the test</button></div>
+    </form></div></main>`;
+  // done
+  return head + `<main id="main" tabindex="-1"><div class="wrap stack-lg tscreen" style="padding-block:2rem 4rem">
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">Done</span><h1>Thank you, ${esc(TST.name || 'that was it')}</h1></div>
+    ${TST.saved === 'db' ? `<div class="banner ok"><strong>Your answers are saved for Axel.</strong><p>You don’t need to send anything. If you recorded the session, please share the recording with Axel.</p></div>`
+      : `<div class="banner warn"><strong>Please send your answers to Axel.</strong><p>They couldn’t be saved automatically from this view. Use Email my answers, or copy them below and send them to Axel.</p></div>`}
+    <div class="row"><a class="btn ${TST.saved === 'db' ? '' : 'primary'}" href="mailto:${ANSWERS_TO}?subject=${encodeURIComponent('INS portal test answers' + (TST.name ? ' from ' + TST.name : ''))}&body=${encodeURIComponent(resultText().slice(0, 1800))}">Email my answers</a><button class="btn" data-act="test-copy">Copy my answers</button><button class="btn quiet" data-act="test-quit">Close the test and look around</button></div>
+    <textarea id="t-result" readonly style="min-height:12rem;font-family:var(--mono);font-size:.8rem" aria-label="Your answers as text">${esc(resultText())}</textarea>
+  </div></main>`;
+}
+function resultText() {
+  const lines = [`INS portal user test — ${TST.name || 'participant'} — ${TST.startedAt}`, `Device: ${TST.device}`, ''];
+  TST.tasks.forEach((r, i) => {
+    lines.push(`Task ${i + 1}: ${r.outcome.toUpperCase()} in ${r.seconds}s · ease ${r.ease ?? '-'}/5`);
+    TEST_TASKS[i].questions.forEach((q, k) => lines.push(`  ${q}\n    ${r.answers['q' + k] || '-'}`));
+    if (r.confusing) lines.push(`  Confusing: ${r.confusing}`);
+    lines.push(`  Ended on: ${r.snapshot.view}${r.snapshot.code ? ' ' + r.snapshot.code : ''} · ${Object.entries(r.snapshot.langs).map(([k, v]) => k + ' ' + v.state).join(', ')}`);
+    lines.push(`  Clicks: ${r.events.map(e => e.label || e.act).join(' › ')}`, '');
+  });
+  if (TST.final) { FINAL_RATINGS.forEach((q, i) => lines.push(`${q} ${TST.final['r' + i] ?? '-'}/5`)); lines.push(`Confusing words: ${TST.final.words || '-'}`, `Other: ${TST.final.other || '-'}`); }
+  return lines.join('\n');
+}
+Object.assign(ACT, {
+  'test-open'() {
+    TST = loadLocal() || { active: true, step: 'intro', idx: 0, tasks: [], name: '', startedAt: new Date().toISOString(),
+      device: `${window.innerWidth}×${window.innerHeight} · ${/Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'phone' : 'computer'}` };
+    if (TST.step === 'task') { startTask(TST.idx, true); return; }
+    saveLocal(); render(); window.scrollTo(0, 0);
+    if (TST.step === 'intro') { TST.saved = null; saveRun().then(() => { if (TST && TST.step === 'intro') render(); }); }
+  },
+  'test-finish'(d) {
+    const task = TEST_TASKS[TST.idx];
+    TST.cur.outcome = d.outcome; TST.cur.seconds = Math.round((Date.now() - TST.cur.t0) / 1000); TST.cur.snapshot = testSnapshot();
+    S.dialog = null; TST.step = 'post'; saveLocal(); render(); window.scrollTo(0, 0); document.getElementById('q0')?.focus();
+  },
+  async 'test-copy'() {
+    const ta = document.getElementById('t-result');
+    try { await navigator.clipboard.writeText(ta.value); toast('Copied. Paste it into your reply to Axel.'); }
+    catch (e) { ta.focus(); ta.select(); toast('Selected. Press Ctrl+C (or Cmd+C) to copy.'); }
+  },
+  'test-quit'() { if (TST) { TST.active = false; saveLocal(); } TST = null; load('today', { role: 'approver', intro: true, markers: true }); render(); window.scrollTo(0, 0); }
+});
+document.addEventListener('submit', async e => {
+  const f = e.target, d = f.dataset; if (!d.form || !d.form.startsWith('test-')) return;
+  const fd = new FormData(f);
+  if (d.form === 'test-start') { TST.name = String(fd.get('name') || '').trim(); startTask(0); return; }
+  if (d.form === 'test-post') {
+    const answers = {}; TEST_TASKS[TST.idx].questions.forEach((q, i) => { answers['q' + i] = String(fd.get('q' + i) || '').trim(); });
+    TST.tasks[TST.idx] = { ...TST.cur, answers, ease: fd.get('ease') ? Number(fd.get('ease')) : null, confusing: String(fd.get('confusing') || '').trim() };
+    delete TST.tasks[TST.idx].t0;
+    saveRun();
+    if (TST.idx + 1 < TEST_TASKS.length) startTask(TST.idx + 1);
+    else { TST.step = 'final'; saveLocal(); render(); window.scrollTo(0, 0); }
+    return;
+  }
+  if (d.form === 'test-final') {
+    TST.final = { r0: Number(fd.get('r0')) || null, r1: Number(fd.get('r1')) || null, r2: Number(fd.get('r2')) || null,
+      words: String(fd.get('words') || '').trim(), other: String(fd.get('other') || '').trim() };
+    TST.step = 'done'; await saveRun(); saveLocal(); render(); window.scrollTo(0, 0);
+  }
+});
+
+load('today');
+ACT['test-open']();
+</script>
