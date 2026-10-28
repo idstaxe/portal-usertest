@@ -856,7 +856,7 @@ function sharedMaterial(c) {
       <span class="chips">${c.langs.map(code => im.captions[code] ? pill('ok', 'check', L(code) + ' caption') : pill('warn', 'alert', L(code) + ' caption missing')).join('')}</span>
       ${canEdit() ? `<span class="row"><button class="btn" data-act="replace-photo" data-cid="${c.id}" data-id="${im.id}">Replace photo</button>${photoSent(c, im.id) ? '' : `<button class="btn quiet" data-act="remove-photo" data-cid="${c.id}" data-id="${im.id}">Remove photo</button>`}</span>` : ''}</div></div>`).join('') || '<p class="muted">No photos yet. INS needs at least one.</p>'}
     ${c.files.map(f => `<div class="figure"><span class="thumb" style="display:grid;place-items:center;color:var(--ink-mute)">${I.doc.replace('<svg', '<svg width="36" height="36"')}</span><div class="stack" style="gap:.3rem"><strong>${esc(f.title)}</strong><span class="small muted">${esc(f.meta)} · attachment in every language</span></div></div>`).join('')}
-    ${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">Add another photo</button><button class="btn quiet" data-act="todo" data-msg="Attachments work today; not wired up in this prototype.">Add an attachment</button></div>` : ''}</div></section>`;
+    ${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">${c.images.length ? 'Add another photo' : 'Add a photo'}</button><button class="btn quiet" data-act="todo" data-msg="Attachments work today; not wired up in this prototype.">Add an attachment</button></div>` : ''}</div></section>`;
 }
 function conversation(c) {
   return `<section aria-labelledby="h-conv" id="conversation"><div class="section-head"><h2 id="h-conv">Conversation with INS</h2><span class="small muted">Your team and the INS editors see this</span></div>
@@ -911,7 +911,7 @@ function viewLang(c, code) {
     ${banner}
     <div class="two"><div class="stack-lg">
       <section aria-labelledby="h-text" class="stack"><h2 id="h-text">Text</h2>${textPart}</section>
-      <section aria-labelledby="h-ph" class="stack"><div class="section-head" style="margin:0"><h2 id="h-ph">Photos and captions</h2><span class="small muted">Photos are shared; captions are per language</span></div><div class="panel">${photos || '<p class="muted">No photos yet.</p>'}</div>${st.key === 'unsent' && canEdit() ? `<div class="banner act" id="next-after-photos"><strong>Everything ${esc(L(code))} needs is here.</strong><div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div></div>` : ''}</section>
+      <section aria-labelledby="h-ph" class="stack"><div class="section-head" style="margin:0"><h2 id="h-ph">Photos and captions</h2><span class="small muted">Photos are shared; captions are per language</span></div><div class="panel">${photos || '<p class="muted">No photos yet. Photos are shared by all languages; you add a caption in each one.</p>'}${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">${c.images.length ? 'Add another photo' : 'Add a photo'}</button></div>` : ''}</div>${st.key === 'unsent' && canEdit() ? `<div class="banner act" id="next-after-photos"><strong>Everything ${esc(L(code))} needs is here.</strong><div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div></div>` : ''}</section>
     </div>
     <aside class="stack" aria-labelledby="h-ver"><h2 id="h-ver">Versions for approval</h2>
       <p class="small muted">An approval covers one exact version: this text plus these photos and captions. Sending a newer version replaces it.</p>
@@ -1224,7 +1224,11 @@ const ACT = {
   'add-photo'(d) {
     const c = camp(d.cid), id = 'p' + (c.images.length + 1);
     c.images.push({ id, title: 'New photo ' + (c.images.length + 1), ver: 1, versions: [{ v: 1, art: 'room', by: me(), at: tick() }], captions: {} });
-    logAdd(c, S.now, PEOPLE[me()].name, 'Added a photo (simulated upload)'); render(); toast('Photo added (simulated). Add a caption in each language.');
+    // Keep any text being written in the editor; adding a photo redraws the page
+    const hl = document.getElementById('hl')?.value, bd = document.getElementById('bd')?.value;
+    logAdd(c, S.now, PEOPLE[me()].name, 'Added a photo (simulated upload)'); render();
+    if (hl !== undefined && document.getElementById('hl')) { document.getElementById('hl').value = hl; document.getElementById('bd').value = bd; }
+    toast('Photo added (simulated). Add a caption in each language.');
   },
   'remove-photo'(d) {
     const c = camp(d.cid), im = c.images.find(i => i.id === d.id);
