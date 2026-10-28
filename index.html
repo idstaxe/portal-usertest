@@ -620,8 +620,6 @@ const unsent = (c, code) => { const s = lastSent(c.lang[code]), n = snapNow(c, c
 function missing(c, code) {
   const ln = c.lang[code], out = [];
   if (!ln.text || !ln.text.headline.trim()) out.push({ kind: 'text', label: `${L(code)} text` });
-  if (!c.images.length) out.push({ kind: 'photo', label: 'At least one photo' });
-  for (const im of c.images) if (!im.captions[code]) out.push({ kind: 'caption', label: `${L(code)} caption for “${im.title}”`, id: im.id });
   return out;
 }
 function sourceApprovedV(c) { const a = currentApproval(c.lang[c.source]); return a ? a.v : null; }
@@ -853,8 +851,8 @@ function viewCampaign(c) {
 function sharedMaterial(c) {
   return `<section aria-labelledby="h-shared"><div class="section-head"><h2 id="h-shared">Photos and files</h2><span class="small muted">Shared by all languages · captions per language</span></div>
     <div class="panel">${c.images.map(im => `<div class="figure"><span class="thumb">${art(im.versions[im.ver - 1].art)}</span><div class="stack" style="gap:.4rem"><strong>${esc(im.title)}</strong><span class="small muted">Photo version ${im.ver} · added by ${esc(PEOPLE[im.versions[im.ver - 1].by].name)} ${day(im.versions[im.ver - 1].at)}</span>
-      <span class="chips">${c.langs.map(code => im.captions[code] ? pill('ok', 'check', L(code) + ' caption') : pill('warn', 'alert', L(code) + ' caption missing')).join('')}</span>
-      ${canEdit() ? `<span class="row"><button class="btn" data-act="replace-photo" data-cid="${c.id}" data-id="${im.id}">Replace photo</button>${photoSent(c, im.id) ? '' : `<button class="btn quiet" data-act="remove-photo" data-cid="${c.id}" data-id="${im.id}">Remove photo</button>`}</span>` : ''}</div></div>`).join('') || '<p class="muted">No photos yet. INS needs at least one.</p>'}
+      <span class="chips">${c.langs.map(code => im.captions[code] ? pill('ok', 'check', L(code) + ' caption') : pill('mute', '', 'No ' + L(code) + ' caption')).join('')}</span>
+      ${canEdit() ? `<span class="row"><button class="btn" data-act="replace-photo" data-cid="${c.id}" data-id="${im.id}">Replace photo</button>${photoSent(c, im.id) ? '' : `<button class="btn quiet" data-act="remove-photo" data-cid="${c.id}" data-id="${im.id}">Remove photo</button>`}</span>` : ''}</div></div>`).join('') || '<p class="muted">No photos yet. A photo isn’t required, but we highly recommend one: releases with a photo get much more attention.</p>'}
     ${c.files.map(f => `<div class="figure"><span class="thumb" style="display:grid;place-items:center;color:var(--ink-mute)">${I.doc.replace('<svg', '<svg width="36" height="36"')}</span><div class="stack" style="gap:.3rem"><strong>${esc(f.title)}</strong><span class="small muted">${esc(f.meta)} · attachment in every language</span></div></div>`).join('')}
     ${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">${c.images.length ? 'Add another photo' : 'Add a photo'}</button><button class="btn quiet" data-act="todo" data-msg="Attachments work today; not wired up in this prototype.">Add an attachment</button></div>` : ''}</div></section>`;
 }
@@ -878,7 +876,7 @@ function viewLang(c, code) {
     const from = src.sent.find(x => x.v === ln.text.basedOn), to = src.sent.find(x => x.v === sourceApprovedV(c));
     banner = `<div class="banner warn"><strong>English changed after this translation was made.</strong><p>This translation was made from English version ${ln.text.basedOn}. English version ${to.v} is now approved. ${esc(L(code))} can’t be published until it’s updated and approved. What changed in English:</p><div class="article readonly" style="padding:1rem"><div class="hl" style="font-size:1.1rem">${wordDiff(from.snap.headline, to.snap.headline)}</div><div class="bd" style="font-size:1rem">${to.snap.body.map((p, i) => p !== from.snap.body[i] ? `<p>${wordDiff(from.snap.body[i] || '', p)}</p>` : '').join('')}</div></div>${canEdit() && !editing ? `<div><button class="btn primary" data-act="edit" data-cid="${c.id}" data-code="${code}">Update the ${esc(L(code))} text</button></div>` : ''}</div>`;
   }
-  else if (st.key === 'unsent') banner = `<div class="banner act"><strong>${s ? `You have changes that aren’t sent yet.` : 'Everything INS needs is here.'}</strong><p>${s ? `Version ${s.v} is ${st.key === 'unsent' && !ca ? 'what approvers see now' : 'still the approved one'}. Sending creates version ${s.v + 1}.` : 'Send it so an approver can approve it.'}</p>${canEdit() ? `<div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div>` : ''}</div>`;
+  else if (st.key === 'unsent') banner = `<div class="banner act"><strong>${s ? `You have changes that aren’t sent yet.` : 'Everything INS needs is here.'}</strong><p>${s ? `Version ${s.v} is ${st.key === 'unsent' && !ca ? 'what approvers see now' : 'still the approved one'}. Sending creates version ${s.v + 1}.` : (c.images.length ? '' : 'Tip: a photo isn’t required, but we highly recommend adding one. ') + 'Send it so an approver can approve it.'}</p>${canEdit() ? `<div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div>` : ''}</div>`;
   else if (st.key === 'proposal' || st.key === 'awaiting') banner = `<div class="banner act"><strong>${st.key === 'proposal' ? `INS suggested changes (version ${s.v}).` : `Version ${s.v} is waiting for your company’s approval.`}</strong><p>${canApprove() ? 'You’re an approver, so you can approve it.' : `Waiting for ${approversText(true)}.`} INS doesn’t approve your material: it publishes it once your approver has approved it.</p><div><button class="btn primary" data-act="go" data-view="review" data-cid="${c.id}" data-code="${code}" data-v="${s.v}">${canApprove() ? (st.key === 'proposal' ? 'See the changes and decide' : 'Review and approve') : 'See what they’ll approve'}</button></div></div>`;
   else if (st.key === 'checking' || st.key === 'ready') banner = `<div class="banner ok"><strong>Version ${ca.v} is approved. Nothing more is needed from you.</strong><p>INS doesn’t approve your material; it publishes it. ${st.dirty ? `You have newer changes that aren’t sent. They are <em>not</em> part of the approval. ` : ''}${ln.live ? `Version ${ln.live.v} is online; INS publishes version ${ca.v} as an update.` : c.confirmed ? `INS publishes it at ${esc(longWhen(c.confirmed))}.` : 'INS will confirm the launch time.'}</p>${st.dirty && canEdit() ? `<div><button class="btn" data-act="send" data-cid="${c.id}" data-code="${code}">Send the changes for approval</button></div>` : ''}</div>`;
   else if (st.key === 'live') banner = `<div class="banner ok"><strong>Version ${ln.live.v} has been online since ${esc(when(ln.live.at))}.</strong><p>You can still make changes. They go through approval and INS publishes them as an update; until then the current version stays online.</p></div>`;
@@ -889,8 +887,8 @@ function viewLang(c, code) {
   const photos = c.images.map(im => {
     const cap = im.captions[code];
     return `<div class="figure"><span class="thumb">${art(im.versions[im.ver - 1].art)}</span><div class="stack" style="gap:.4rem"><strong>${esc(im.title)}</strong>
-      ${cap ? `<p class="caption">${esc(cap)}</p>` : `<p class="state c-warn">${I.alert}<span>${esc(L(code))} caption missing</span></p>`}
-      ${canEdit() ? `<form class="stack" data-form="caption" data-cid="${c.id}" data-code="${code}" data-id="${im.id}" style="gap:.4rem" ${cap ? 'hidden' : ''} id="capf-${im.id}-${code}"><div class="field"><label for="cap-${im.id}-${code}">${esc(L(code))} caption <span class="hint">· write it in ${esc(L(code))} (${esc(LANGS[code].native)})</span></label><input type="text" id="cap-${im.id}-${code}" name="caption" value="${esc(cap || '')}" placeholder="${esc(L(code))}: what the photo shows" lang="${code}"><span class="hint">Shown under the photo in the ${esc(L(code))} release. The English caption is: “${esc(c.images.find(x => x.id === im.id).captions[c.source] || '–')}”</span></div><div class="row"><button class="btn primary" type="submit">Save caption</button></div></form>
+      ${cap ? `<p class="caption">${esc(cap)}</p>` : `<p class="small muted">No ${esc(L(code))} caption (optional)</p>`}
+      ${canEdit() ? `<form class="stack" data-form="caption" data-cid="${c.id}" data-code="${code}" data-id="${im.id}" style="gap:.4rem" ${cap ? 'hidden' : ''} id="capf-${im.id}-${code}"><div class="field"><label for="cap-${im.id}-${code}">${esc(L(code))} caption <span class="hint">· optional · write it in ${esc(L(code))} (${esc(LANGS[code].native)})</span></label><input type="text" id="cap-${im.id}-${code}" name="caption" value="${esc(cap || '')}" placeholder="${esc(L(code))}: what the photo shows" lang="${code}"><span class="hint">Shown under the photo in the ${esc(L(code))} release. The English caption is: “${esc(c.images.find(x => x.id === im.id).captions[c.source] || '–')}”</span></div><div class="row"><button class="btn primary" type="submit">Save caption</button></div></form>
       ${cap ? `<span><button class="btn quiet" data-act="show-cap" data-target="capf-${im.id}-${code}">Edit caption</button></span>` : ''}` : ''}</div></div>`; }).join('');
 
   const versions = ln.sent.slice().reverse().map(x => {
@@ -911,7 +909,7 @@ function viewLang(c, code) {
     ${banner}
     <div class="two"><div class="stack-lg">
       <section aria-labelledby="h-text" class="stack"><h2 id="h-text">Text</h2>${textPart}</section>
-      <section aria-labelledby="h-ph" class="stack"><div class="section-head" style="margin:0"><h2 id="h-ph">Photos and captions</h2><span class="small muted">Photos are shared; captions are per language</span></div><div class="panel">${photos || '<p class="muted">No photos yet. Photos are shared by all languages; you add a caption in each one.</p>'}${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">${c.images.length ? 'Add another photo' : 'Add a photo'}</button></div>` : ''}</div>${st.key === 'unsent' && canEdit() ? `<div class="banner act" id="next-after-photos"><strong>Everything ${esc(L(code))} needs is here.</strong><div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div></div>` : ''}</section>
+      <section aria-labelledby="h-ph" class="stack"><div class="section-head" style="margin:0"><h2 id="h-ph">Photos and captions</h2><span class="small muted">Photos are shared; captions are per language</span></div><div class="panel">${photos || '<p class="muted">No photos yet. A photo isn’t required, but we highly recommend one: releases with a photo get much more attention. Photos are shared by all languages; captions are optional.</p>'}${canEdit() ? `<div class="row" style="margin-top:.75rem"><button class="btn" data-act="add-photo" data-cid="${c.id}">${c.images.length ? 'Add another photo' : 'Add a photo'}</button></div>` : ''}</div>${st.key === 'unsent' && canEdit() ? `<div class="banner act" id="next-after-photos"><strong>Everything ${esc(L(code))} needs is here.</strong><div><button class="btn primary" data-act="send" data-cid="${c.id}" data-code="${code}">Send ${esc(L(code))} for approval</button></div></div>` : ''}</section>
     </div>
     <aside class="stack" aria-labelledby="h-ver"><h2 id="h-ver">Versions for approval</h2>
       <p class="small muted">An approval covers one exact version: this text plus these photos and captions. Sending a newer version replaces it.</p>
@@ -1025,7 +1023,7 @@ function viewNew() {
     <p style="color:var(--ink-soft)">You don’t need everything now. The campaign page shows what’s still missing and who it’s waiting for.</p>
     <section class="panel stack"><h2 style="font-size:1.15rem">For each language (${langs.map(L).join(', ')})</h2><ul class="checklist">
       <li>${I.doc}<span><strong>Headline and text.</strong> Paste it or import a Word file.</span></li>
-      <li>${I.image}<span><strong>At least one photo, with a caption in each language.</strong> Photos are shared; captions are written per language.</span></li>
+      <li>${I.image}<span><strong>Photos (optional, highly recommended).</strong> Photos are shared by all languages. You can add a caption in each language if you like.</span></li>
       <li>${I.doc}<span><strong>Attachments</strong> (optional), such as a datasheet.</span></li></ul></section>
     <section class="panel stack"><h2 style="font-size:1.15rem">Who approves</h2>
       <p>Each language needs an approval from <strong>Maria Lind</strong> or <strong>Petra Koski</strong>. They’re the approvers at Norrvik Pumps.</p>
@@ -1217,7 +1215,7 @@ const ACT = {
     if (!touched.length) { applyPending('save'); return; }
     changeDialog(c, touched, `You’re replacing “${esc(im.title)}” with a new photo <span class="tag">Simulated: a plant-room photo</span>. The photo is shared, so this affects every language.`,
       `<div class="dropzone"><strong>plant-room.jpg</strong> <span class="tag">Simulated upload</span><span class="hint">In the portal you drag the new photo here, or choose a file.</span></div>
-      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.6rem"><legend style="font-weight:600;margin-bottom:.3rem">Captions for the new photo</legend><span class="hint">Each caption is part of what approvers approve. Check that it describes the new photo. Leave a language empty if a colleague will write it: it becomes their to-do.</span>
+      <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.6rem"><legend style="font-weight:600;margin-bottom:.3rem">Captions for the new photo</legend><span class="hint">Each caption is part of what approvers approve. Check that it describes the new photo. Captions are optional: leave a language empty if it doesn’t need one.</span>
       ${c.langs.map(k => `<div class="field"><label for="rp-${k}">${L(k)}</label><input type="text" id="rp-${k}" value="${esc(im.ver > 1 ? (im.captions[k] || '') : (PHOTO2[k] || ''))}"></div>`).join('')}</fieldset>`);
     render();
   },
@@ -1228,7 +1226,7 @@ const ACT = {
     const hl = document.getElementById('hl')?.value, bd = document.getElementById('bd')?.value;
     logAdd(c, S.now, PEOPLE[me()].name, 'Added a photo (simulated upload)'); render();
     if (hl !== undefined && document.getElementById('hl')) { document.getElementById('hl').value = hl; document.getElementById('bd').value = bd; }
-    toast('Photo added (simulated). Add a caption in each language.');
+    toast('Photo added (simulated). You can add a caption in each language if you like.');
   },
   'remove-photo'(d) {
     const c = camp(d.cid), im = c.images.find(i => i.id === d.id);
