@@ -1360,19 +1360,16 @@ render = function () {
 const TEST_TASKS = [
   { id: 't1', scenario: 'today', role: 'admin',
     text: 'You’re the client admin at Norrvik Pumps and you’ve just logged in. INS has changed your English headline. Decide whether you accept the change, and find out why INS changed it.',
-    questions: ['What did you decide, and why?', 'Why did INS change the headline?', 'What does your decision mean for the Finnish and Swedish versions?', 'Was anything published when you clicked?'] },
+    questions: ['What did you decide, and why did INS change the headline?', 'Was anything published when you clicked?'] },
   { id: 't2', scenario: null, role: 'admin',
-    text: 'Now get the Swedish version ready and approved.',
-    questions: ['What did you do?', 'What else needs you, and is anyone else involved (a colleague, or INS)?'] },
-  { id: 't3', scenario: null, role: 'admin',
-    text: 'Make sure the Finnish version is approved.',
-    questions: ['In your own words: what exactly did you approve?', 'What happens next, and who does it?', 'If a colleague edits the Finnish text tomorrow, does your approval still count?'] },
-  { id: 't4', scenario: 'ready', role: 'admin',
+    text: 'Now get the Swedish version ready and approved. (You don’t need to write good Swedish: a few words are fine.)',
+    questions: ['What did you do, and is anyone else still needed?'] },
+  { id: 't3', scenario: 'ready', role: 'admin',
     text: 'Two weeks later: all three languages are approved and INS has confirmed the launch time. A customer has sent a much better product photo. Replace the test-rig photo with it.',
-    questions: ['What happens to the launch now?', 'What were your choices when you saved the new photo, and what would the other choice have done?'] },
-  { id: 't5', scenario: null, role: 'admin',
+    questions: ['What happens to the launch now, and what choice did you make when you saved?'] },
+  { id: 't4', scenario: null, role: 'admin',
     text: 'Your CEO asks: what is ready to launch, who are we waiting for, and when will the release actually be published? Find out.',
-    questions: ['What is ready, and what isn’t?', 'Who are you waiting for?', 'What date and time would you tell your CEO?'] }
+    questions: ['What would you tell your CEO?'] }
 ];
 const FINAL_RATINGS = ['I always knew what I had to do next.', 'I knew exactly what I was approving.', 'I’d trust this with a real launch.'];
 let TST = null;
@@ -1462,10 +1459,10 @@ const scale = (name, lo, hi) => `<div class="scale" role="radiogroup" aria-label
 function viewTest() {
   const head = `<header class="top"><div class="wrap"><span class="logo"><b>/ins</b><span>Client portal · user test</span></span></div></header>`;
   if (TST.step === 'intro') return head + `<main id="main" tabindex="-1"><div class="wrap stack-lg tscreen" style="padding-block:2rem 4rem">
-    <div class="stack" style="gap:.5rem"><span class="eyebrow">User test · about 45 minutes</span><h1>Welcome, and thanks for helping</h1></div>
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">User test · about 20 minutes</span><h1>Welcome, and thanks for helping</h1></div>
     <p>You’ll try the new INS client portal as a client who has never used it. You are the <strong>client admin at Norrvik Pumps Oy</strong>: you prepare the material, approve it, and look after your company’s use of the portal. Norrvik is launching the AquaLine X3 pump through INS, in English, Finnish and Swedish. Your colleagues also use the portal. Use <strong>View as</strong> at the top right to see it from their side: Maria Lind (approver), Jonas Berg (contributor) and Eero Salo (viewer), then switch back to yourself. The company, the people and the material are fictional, and nothing you do is sent or published.</p>
     <div class="panel stack"><h2 style="font-size:1.15rem">How it works</h2><ul style="margin:0;padding-left:1.2rem;display:grid;gap:.4rem">
-      <li>You get <strong>five tasks</strong>, one at a time. Each task stays at the top of the screen while you work.</li>
+      <li>You get <strong>four short tasks</strong>, one at a time. Each task stays at the top of the screen while you work.</li>
       <li>Work it out yourself, as a real client would. There are no wrong answers: if something is unclear, that is what we need to find.</li>
       <li>When you think you’ve finished a task, click <strong>I’m done</strong>. If you’re stuck for a few minutes, click <strong>I’m stuck, skip</strong>. Both are fine.</li>
       <li>After each task you answer a few short questions. At the end there are three ratings.</li>
