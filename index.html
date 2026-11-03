@@ -295,6 +295,7 @@ textarea { min-height: 12rem; line-height: 1.55; resize: vertical; font-family: 
 .testbar .tb-text { flex: 1 1 20rem; min-width: 0; font-size: 0.95rem; }
 .testbar .tb-text b { font-family: var(--mono); font-weight: 500; color: var(--sim); margin-right: 0.4rem; }
 .testbar .btn { min-height: 40px; padding-block: 0.35rem; }
+.testbar .btn.primary { font-weight: 600; box-shadow: 0 0 0 3px var(--sim-tint), 0 0 0 4px var(--sim); }
 .tscreen { max-width: 44rem; }
 .tscreen .task-card { border: 2px dashed var(--sim); background: var(--sim-tint); border-radius: var(--r); padding: 1.1rem 1.25rem; font-size: 1.1rem; }
 .scale { display: flex; flex-wrap: wrap; gap: 0.4rem; }
@@ -684,8 +685,9 @@ function allTasks() {
         (mineToDo ? mine : colleagues).push({ ...ctx, title, why: whyAll, act, view: 'lang', who: `${PEOPLE[prep].name} (prepares the material)`, icon: st.key === 'unsent' ? 'pen' : 'alert', tone: st.tone, focus: st.key === 'missing' && st.miss[0].kind === 'caption' ? `cap-${st.miss[0].id}-${code}` : null });
       } else if (st.owner === 'approvers') {
         const t = st.key === 'proposal' ? { title: `Decide on INS’s suggested changes to ${L(code)}`, why: `Anna Virtanen at INS suggested new wording. It’s only used if an approver approves it, and ${L(code)} can’t launch until someone decides.`, act: 'See the changes' }
-                                        : { title: `Approve ${L(code)} · version ${s.v}`, why: `Sent by ${PEOPLE[s.by].name} ${day(s.at)}.` + (sourcePending(c, code) ? ' Decide on English first: it has new wording waiting, and this translation may need updating.' : ''), act: 'Review and approve' };
-        if (canApprove()) mine.push({ ...ctx, ...t, view: 'review', v: s.v, who: 'You', icon: st.key === 'proposal' ? 'ins' : 'check', tone: 'act' });
+                                        : sourcePending(c, code) ? { title: `Decide on English first, then approve ${L(code)}`, why: `${L(code)} · version ${s.v} is waiting, but English has new wording waiting for a decision. If that’s approved, ${L(code)} must be updated and approved again.`, act: 'See the English changes', code: c.source, v: sourcePending(c, code).v }
+                                        : { title: `Approve ${L(code)} · version ${s.v}`, why: `Sent by ${PEOPLE[s.by].name} ${day(s.at)}.`, act: `Review version ${s.v}` };
+        if (canApprove()) mine.push({ ...ctx, ...t, view: 'review', v: t.v ?? s.v, who: 'You', icon: st.key === 'proposal' ? 'ins' : 'check', tone: 'act' });
         else colleagues.push({ ...ctx, ...t, view: 'review', v: s.v, who: approversText(true), icon: 'clock', tone: 'mute' });
       }
     }
@@ -952,13 +954,15 @@ function viewReview(c, code, v) {
     ln.live ? `Version ${ln.live.v} stays online unchanged until INS publishes this one as an update.` : null,
     `Your name, the time and the fingerprint <span class="fp">${x.fp}</span> are recorded.`
   ].filter(Boolean);
+  const conseqMain = conseq.slice(0, 3), conseqMore = conseq.slice(3);
 
   let bar;
   if (!isLatest) bar = `<span class="spacer">This version was replaced by version ${s.v}. It can no longer be approved.</span><button class="btn" data-act="go" data-view="review" data-cid="${c.id}" data-code="${code}" data-v="${s.v}">See version ${s.v}</button>`;
   else if (approvedThis) bar = `<span class="spacer">${I.check.replace('<svg', '<svg width="16" height="16" style="vertical-align:-3px;color:var(--ok)"')} Approved by ${esc(PEOPLE[ca.by].name)} · ${esc(when(ca.at))}</span><button class="btn" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">Back to ${esc(L(code))}</button>`;
   else if (canApprove()) bar = `<span class="spacer">You’re approving exactly what’s on this page.</span>
-      ${x.ins ? `<button class="btn quiet" data-act="decline" data-cid="${c.id}" data-code="${code}">Keep our wording</button><button class="btn" data-act="reply" data-cid="${c.id}">Reply to INS</button>` : `<button class="btn" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">Make changes first</button>`}
-      <button class="btn primary" data-act="approve" data-cid="${c.id}" data-code="${code}" data-v="${x.v}">Approve ${esc(L(code))} · version ${x.v}</button>`;
+      ${x.ins ? `<button class="btn" data-act="decline" data-cid="${c.id}" data-code="${code}">Keep our wording</button>` : `<button class="btn" data-act="go" data-view="lang" data-cid="${c.id}" data-code="${code}">Make changes first</button>`}
+      ${srcPending ? `<button class="btn" data-act="approve" data-cid="${c.id}" data-code="${code}" data-v="${x.v}">Approve ${esc(L(code))} anyway</button><button class="btn primary" data-act="go" data-view="review" data-cid="${c.id}" data-code="${c.source}" data-v="${srcPending.v}">Decide on English first</button>`
+                   : `<button class="btn primary" data-act="approve" data-cid="${c.id}" data-code="${code}" data-v="${x.v}">Approve ${esc(L(code))} · version ${x.v}</button>`}`;
   else bar = `<span class="spacer">Only approvers can approve: ${esc(approversText(true))}.${S.role === 'viewer' ? '' : ' You can still reply or make changes.'}</span>${S.role !== 'viewer' ? `<button class="btn" data-act="remind" data-cid="${c.id}">Remind the approvers</button>${build()}` : ''}`;
 
   return `<div class="wrap stack-lg" style="padding-bottom:2rem">
@@ -966,7 +970,7 @@ function viewReview(c, code, v) {
       <span class="eyebrow">${isLatest && !approvedThis ? 'Review before approving' : 'Version record'}</span>
       <h1>${esc(L(code))} · version ${x.v}</h1>
       <p class="muted">${x.ins ? `Suggested by ${esc(PEOPLE[x.by].name)}, INS` : `Sent by ${esc(PEOPLE[x.by].name)}`} · ${esc(longWhen(x.at))}</p></div>
-    ${x.ins ? `<div class="note-ins"><span class="eyebrow" style="color:var(--info)">Why INS suggests this</span><blockquote>${esc(x.note)}</blockquote><span class="small">${esc(PEOPLE[x.by].name)}, ${esc(PEOPLE[x.by].title)}. INS can only suggest. This wording is used only if an approver approves it.</span></div>` : ''}
+    ${x.ins ? `<div class="note-ins"><span class="eyebrow" style="color:var(--info)">Why INS suggests this</span><blockquote>${esc(x.note)}</blockquote><span class="small">${esc(PEOPLE[x.by].name)}, ${esc(PEOPLE[x.by].title)}. INS can only suggest. This wording is used only if an approver approves it.</span>${canApprove() && isLatest && !approvedThis ? `<span class="small"><button class="link" data-act="reply" data-cid="${c.id}">Ask INS about this</button> (a message, not a decision)</span>` : ''}</div>` : ''}
     ${srcPending && canApprove() && !approvedThis ? `<div class="banner warn"><strong>Decide on English first.</strong><p>This translation was made from English version ${x.snap.basedOn}. English version ${srcPending.v} has new wording waiting for a decision. If it’s approved, ${L(code)} must be updated and approved again, so decide on English first.</p><div><button class="btn" data-act="go" data-view="review" data-cid="${c.id}" data-code="${c.source}" data-v="${srcPending.v}">Go to English version ${srcPending.v}</button></div></div>` : ''}
     ${x.ins && prev && isLatest ? `<div class="banner warn"><strong>Your approval of version ${prev.v} no longer counts.</strong><p>When INS sends a suggestion it becomes the newest version, so the earlier approval stops counting. To launch, approve this version or send your own. ${prule('R2')}</p></div>` : ''}
     <div class="two">
@@ -983,9 +987,9 @@ function viewReview(c, code, v) {
             <li>${I.doc}<span>The ${esc(L(code))} headline and ${x.snap.body.length} paragraphs shown here${isTr ? ` (translated from English version ${x.snap.basedOn})` : ''}</span></li>
             ${x.snap.images.map(im => `<li>${I.image}<span>Photo “${esc(im.title)}” (photo version ${im.ver}) with its ${esc(L(code))} caption</span></li>`).join('')}
             ${c.files.filter(f => x.snap.files.includes(f.id)).map(f => `<li>${I.doc}<span>Attachment: ${esc(f.title)}</span></li>`).join('')}
-            <li>${I.lock}<span>This version can’t be edited. Any change becomes a new version that needs its own approval. Fingerprint <span class="fp">${x.fp}</span>: a code that identifies exactly this content.</span></li>
+            <li>${I.lock}<span>Locked: any change becomes a new version with its own approval. Fingerprint <span class="fp">${x.fp}</span>.</span></li>
           </ul></section>
-        <section class="panel stack" aria-labelledby="h-then"><h2 id="h-then" style="font-size:1.15rem">${approvedThis ? 'What approval meant' : 'What happens when you approve'}</h2><ul class="conseq">${conseq.map(t => `<li>${t}</li>`).join('')}</ul></section>
+        <section class="panel stack" aria-labelledby="h-then"><h2 id="h-then" style="font-size:1.15rem">${approvedThis ? 'What approval meant' : 'What happens when you approve'}</h2><ul class="conseq">${conseqMain.map(t => `<li>${t}</li>`).join('')}</ul>${conseqMore.length ? `<details class="small"><summary>Also good to know</summary><ul class="conseq" style="margin-top:.5rem">${conseqMore.map(t => `<li>${t}</li>`).join('')}</ul></details>` : ''}</section>
       </aside>
     </div>
   </div>
@@ -1114,6 +1118,7 @@ function afterSend(c, codes) {
   const names = codes.map(L).join(', ');
   if (!canApprove()) { S.dialog = null; render(); toast(`Sent ${names} for approval. Waiting for ${approversText(true)}; INS doesn’t approve your material.`); return; }
   const first = codes[0], v = lastSent(c.lang[first]).v;
+  if (codes.length === 1) { S.dialog = null; go({ name: 'review', cid: c.id, code: first, v }); toast(`Sent ${names} · version ${v}. You’re an approver, so you can approve it here.`); return; }
   S.dialog = { title: `Sent ${names} for approval`, html: `<p>Sending doesn’t approve anything. You’re an approver, so you can approve ${codes.length > 1 ? 'each language' : 'it'} now${codes.length > 1 ? ', one at a time' : ''}.</p>`,
     actions: [{ label: 'Later', act: 'close', kind: 'quiet' }, { label: `Review and approve ${L(first)} · version ${v}`, act: 'go', kind: 'primary', data: { view: 'review', cid: c.id, code: first, v } }] };
   render();
@@ -1213,7 +1218,9 @@ const ACT = {
     S.pending = { type: 'photo', cid: c.id, id: im.id };
     const touched = c.langs.filter(k => lastSent(c.lang[k]));
     if (!touched.length) { applyPending('save'); return; }
-    changeDialog(c, touched, `You’re replacing “${esc(im.title)}” with a new photo <span class="tag">Simulated: a plant-room photo</span>. The photo is shared, so this affects every language.`,
+    const approvedCodes = touched.filter(k => currentApproval(c.lang[k]));
+    const lead = approvedCodes.length ? `<strong>${approvedCodes.length === c.langs.length ? `All ${c.langs.length} approvals stop counting` : `The ${approvedCodes.map(L).join(' and ')} approval${approvedCodes.length > 1 ? 's' : ''} stop${approvedCodes.length > 1 ? '' : 's'} counting`} if you send this.</strong> ${c.confirmed && !c.langs.some(k => c.lang[k].live) ? `INS can’t publish at ${esc(longWhen(c.confirmed))} until ${esc(approversText(true))} approve the new versions; otherwise the launch moves.` : `${esc(approversText(true))} must approve the new versions.`}<br>` : '';
+    changeDialog(c, touched, `${lead}You’re replacing “${esc(im.title)}” with a new photo <span class="tag">Simulated: a plant-room photo</span>. The photo is shared, so this affects every language.`,
       `<div class="dropzone"><strong>plant-room.jpg</strong> <span class="tag">Simulated upload</span><span class="hint">In the portal you drag the new photo here, or choose a file.</span></div>
       <fieldset class="stack" style="border:0;padding:0;margin:0;gap:.6rem"><legend style="font-weight:600;margin-bottom:.3rem">Captions for the new photo</legend><span class="hint">Each caption is part of what approvers approve. Check that it describes the new photo. Captions are optional: leave a language empty if it doesn’t need one.</span>
       ${c.langs.map(k => `<div class="field"><label for="rp-${k}">${L(k)}</label><input type="text" id="rp-${k}" value="${esc(im.ver > 1 ? (im.captions[k] || '') : (PHOTO2[k] || ''))}"></div>`).join('')}</fieldset>`);
@@ -1369,7 +1376,7 @@ const TEST_TASKS = [
     questions: ['What did you do, and is anyone else still needed?'] },
   { id: 't3', scenario: 'ready', role: 'admin',
     text: 'Two weeks later: all three languages are approved and INS has confirmed the launch time. A customer has sent a much better product photo. Replace the test-rig photo with it.',
-    questions: ['What happens to the launch now, and what choice did you make when you saved?'] },
+    questions: ['Which button did you press when you saved: Send for approval, Keep it as a draft, or Cancel?', 'What happens to the launch now?'] },
   { id: 't4', scenario: null, role: 'admin',
     text: 'Your CEO asks: what is ready to launch, who are we waiting for, and when will the release actually be published? Find out.',
     questions: ['What would you tell your CEO?'] }
@@ -1467,7 +1474,7 @@ function viewTest() {
     <div class="panel stack"><h2 style="font-size:1.15rem">How it works</h2><ul style="margin:0;padding-left:1.2rem;display:grid;gap:.4rem">
       <li>You get <strong>four short tasks</strong>, one at a time. Each task stays at the top of the screen while you work.</li>
       <li>Work it out yourself, as a real client would. There are no wrong answers: if something is unclear, that is what we need to find.</li>
-      <li>When you think you’ve finished a task, click <strong>I’m done</strong>. If you’re stuck for a few minutes, click <strong>I’m stuck, skip</strong>. Both are fine.</li>
+      <li>Do only what the task asks. As soon as it’s done, click <strong>I’m done</strong> in the bar at the top; the next task carries on from where you are. If you’re stuck for a few minutes, click <strong>I’m stuck, skip</strong>. Both are fine.</li>
       <li>After each task you answer a few short questions. At the end there are three ratings.</li>
       <li>If you’re recording yourself, <strong>think aloud</strong>: say what you look for and what surprises you.</li>
       <li>Your answers are saved for Axel at INS as you go.</li></ul></div>
